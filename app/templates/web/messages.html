@@ -1,0 +1,44 @@
+{% extends "web/base.html" %}
+{% block title %}Messages - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container" data-conversation-user-id="{{ conversation_user_id if conversation_user_id is defined else '' }}">
+
+  <div id="sh-error" class="sh-error sh-hidden"></div>
+
+  <div class="sh-card" id="sh-conversation-panel" {% if conversation_user_id is not defined %}style="display:none;"{% endif %}>
+    <a href="/app/messages" class="sh-muted">&larr; Back to inbox</a>
+    <h3 id="sh-conversation-title">Conversation</h3>
+    <div id="sh-conversation-messages" style="max-height:340px; overflow-y:auto; display:flex; flex-direction:column;"></div>
+    <form id="sh-reply-form" style="margin-top:12px; display:flex; gap:8px;">
+      <input class="sh-input" type="text" id="sh-reply-content" placeholder="Type a message..." required>
+      <button class="sh-btn" type="submit">Send</button>
+    </form>
+  </div>
+
+  <div id="sh-inbox-panel" {% if conversation_user_id is defined %}style="display:none;"{% endif %}>
+    <div class="sh-card">
+      <h3 style="margin-top:0;">New message</h3>
+      <form id="sh-new-message-form" style="display:flex; gap:8px;">
+        <input class="sh-input" type="number" id="sh-recipient-id" placeholder="Recipient user ID" required style="max-width:160px;">
+        <input class="sh-input" type="text" id="sh-new-message-content" placeholder="Message..." required>
+        <button class="sh-btn" type="submit">Send</button>
+      </form>
+      <p class="sh-muted" style="margin-top:8px;">Tip: find a user's ID on their profile page URL, e.g. <code>/app/profile/2</code>.</p>
+    </div>
+
+    <div class="sh-card">
+      <div class="sh-tabs">
+        <div class="sh-tab active" data-tab="inbox">Inbox</div>
+        <div class="sh-tab" data-tab="sent">Sent</div>
+      </div>
+      <div id="sh-message-list">
+        <p class="sh-muted">Loading messages...</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/messages.js') }}"></script>
+{% endblock %}

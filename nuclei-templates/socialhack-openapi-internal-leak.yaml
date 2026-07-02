@@ -1,0 +1,32 @@
+id: socialhack-openapi-internal-leak
+
+info:
+  name: SocialHack API - OpenAPI Spec Leaks Internal Endpoints
+  author: socialhack-course
+  severity: high
+  description: >
+    /openapi.json is generated from the full route table without filtering
+    out paths tagged x-internal:true, exposing admin, debug, internal
+    ops-tooling, and deprecated legacy-API endpoints to anyone who finds
+    the spec.
+  tags: api,exposure,inventory,socialhack
+  reference:
+    - https://owasp.org/API-Security/editions/2023/en/0xa9-improper-inventory-management/
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/openapi.json"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "x-internal"
+          - "true"
+        condition: and
+
+      - type: status
+        status:
+          - 200

@@ -4,3 +4,5 @@ Flask-CORS==5.0.1
 PyJWT==2.10.1
 bcrypt==4.3.0
 requests==2.32.3
+Flask-Sock==0.7.0
+websocket-client==1.8.0

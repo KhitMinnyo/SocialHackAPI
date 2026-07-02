@@ -1,0 +1,203 @@
+/* SocialHack Web UI - plain CSS, no build step, no framework. */
+
+:root {
+  --sh-bg: #f0f2f5;
+  --sh-card: #ffffff;
+  --sh-border: #dfe3e8;
+  --sh-primary: #6c5ce7;
+  --sh-primary-dark: #5849c2;
+  --sh-danger: #e74c3c;
+  --sh-danger-dark: #c0392b;
+  --sh-text: #1c1e21;
+  --sh-muted: #65676b;
+  --sh-verified: #1da1f2;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--sh-bg);
+  color: var(--sh-text);
+}
+
+a { color: var(--sh-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.sh-nav {
+  background: var(--sh-card);
+  border-bottom: 1px solid var(--sh-border);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.sh-nav-left { display: flex; align-items: center; gap: 20px; }
+.sh-nav-right { display: flex; align-items: center; gap: 16px; }
+
+.sh-brand {
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--sh-primary);
+  letter-spacing: -0.5px;
+}
+
+.sh-nav a.sh-navlink {
+  color: var(--sh-text);
+  font-weight: 600;
+  font-size: 14px;
+}
+.sh-nav a.sh-navlink:hover { color: var(--sh-primary); text-decoration: none; }
+
+.sh-hidden { display: none !important; }
+
+.sh-container {
+  max-width: 640px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.sh-container-wide {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.sh-card {
+  background: var(--sh-card);
+  border: 1px solid var(--sh-border);
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.sh-card h2, .sh-card h3 { margin-top: 0; }
+
+.sh-form-group { margin-bottom: 14px; }
+.sh-form-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+
+.sh-input, .sh-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--sh-border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+.sh-textarea { resize: vertical; min-height: 70px; }
+
+.sh-btn {
+  display: inline-block;
+  background: var(--sh-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.sh-btn:hover { background: var(--sh-primary-dark); }
+.sh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.sh-btn-danger { background: var(--sh-danger); }
+.sh-btn-danger:hover { background: var(--sh-danger-dark); }
+
+.sh-btn-small { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+.sh-btn-outline {
+  background: transparent;
+  color: var(--sh-primary);
+  border: 1px solid var(--sh-primary);
+}
+.sh-btn-outline:hover { background: #f3f1ff; }
+
+.sh-error {
+  background: #fdecea;
+  color: var(--sh-danger-dark);
+  border: 1px solid #f5c6c0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.sh-success {
+  background: #e8f8f0;
+  color: #1e7d4b;
+  border: 1px solid #b7ecd0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.sh-muted { color: var(--sh-muted); font-size: 13px; }
+
+.sh-post {
+  border-bottom: 1px solid var(--sh-border);
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+}
+.sh-post:last-child { border-bottom: none; margin-bottom: 0; }
+
+.sh-post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.sh-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--sh-primary); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px; flex-shrink: 0;
+}
+.sh-post-content { font-size: 15px; line-height: 1.4; margin: 6px 0; white-space: pre-wrap; }
+.sh-post-actions { display: flex; gap: 10px; margin-top: 8px; align-items: center; }
+
+.sh-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-left: 4px;
+}
+.sh-badge-verified { background: #e6f7ff; color: var(--sh-verified); }
+.sh-badge-role { background: #fff4e5; color: #b26a00; }
+.sh-badge-private { background: #f0f0f0; color: var(--sh-muted); }
+
+.sh-profile-header { display: flex; gap: 16px; align-items: center; }
+.sh-profile-header .sh-avatar { width: 72px; height: 72px; font-size: 26px; }
+.sh-stats { display: flex; gap: 18px; margin-top: 10px; font-size: 13px; }
+.sh-stats b { color: var(--sh-text); }
+
+.sh-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sh-table th, .sh-table td { text-align: left; padding: 8px; border-bottom: 1px solid var(--sh-border); }
+.sh-table th { color: var(--sh-muted); font-weight: 600; }
+
+.sh-comment { padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+.sh-comment:last-child { border-bottom: none; }
+
+.sh-msg-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--sh-border); }
+.sh-msg-row.unread { font-weight: 700; }
+
+.sh-bubble { max-width: 70%; padding: 8px 12px; border-radius: 14px; margin-bottom: 8px; font-size: 14px; }
+.sh-bubble-me { background: var(--sh-primary); color: #fff; margin-left: auto; }
+.sh-bubble-them { background: #eee; color: var(--sh-text); margin-right: auto; }
+
+.sh-warning-banner {
+  background: #1c1e21;
+  color: #f5c518;
+  font-size: 12px;
+  text-align: center;
+  padding: 6px;
+}
+
+.sh-tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 1px solid var(--sh-border); }
+.sh-tab {
+  padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+  border-bottom: 2px solid transparent; color: var(--sh-muted);
+}
+.sh-tab.active { color: var(--sh-primary); border-bottom-color: var(--sh-primary); }

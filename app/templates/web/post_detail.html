@@ -1,0 +1,29 @@
+{% extends "web/base.html" %}
+{% block title %}Post - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container" data-post-id="{{ post_id }}">
+
+  <div id="sh-error" class="sh-error sh-hidden"></div>
+
+  <div class="sh-card" id="sh-post-card">
+    <p class="sh-muted">Loading post...</p>
+  </div>
+
+  <div class="sh-card">
+    <h3 style="margin-top:0;">Comments</h3>
+    <form id="sh-comment-form" style="margin-bottom:14px;">
+      <div class="sh-form-group">
+        <textarea class="sh-textarea" id="sh-comment-content" placeholder="Write a comment..." required></textarea>
+      </div>
+      <button class="sh-btn" type="submit">Comment</button>
+    </form>
+    <div id="sh-comments">
+      <p class="sh-muted">Loading comments...</p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/post.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "web/base.html" %}
+{% block title %}Profile - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container" data-user-id="{{ user_id }}">
+
+  <div id="sh-error" class="sh-error sh-hidden"></div>
+
+  <div class="sh-card" id="sh-profile-header">
+    <p class="sh-muted">Loading profile...</p>
+  </div>
+
+  <div class="sh-card sh-hidden" id="sh-edit-card">
+    <h3 style="margin-top:0;">Edit profile</h3>
+    <form id="sh-edit-form">
+      <div class="sh-form-group">
+        <label for="edit-bio">Bio</label>
+        <textarea class="sh-textarea" id="edit-bio"></textarea>
+      </div>
+      <div class="sh-form-group">
+        <label for="edit-pic">Profile picture URL</label>
+        <input class="sh-input" type="text" id="edit-pic">
+      </div>
+      <div class="sh-form-group" style="display:flex; align-items:center; gap:8px;">
+        <input type="checkbox" id="edit-private">
+        <label for="edit-private" style="display:inline; font-weight:normal;">Private account</label>
+      </div>
+      <button class="sh-btn" type="submit">Save changes</button>
+    </form>
+  </div>
+
+  <div class="sh-card">
+    <h3 style="margin-top:0;">Posts</h3>
+    <div id="sh-user-posts">
+      <p class="sh-muted">Loading posts...</p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% endblock %}

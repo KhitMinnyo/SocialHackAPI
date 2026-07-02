@@ -1,0 +1,41 @@
+{% extends "web/base.html" %}
+{% block title %}Log in - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+  <div class="sh-card">
+    <h2>Log in to SocialHack</h2>
+    <div id="sh-error" class="sh-error sh-hidden"></div>
+
+    <form id="sh-login-form">
+      <div class="sh-form-group">
+        <label for="username">Username</label>
+        <input class="sh-input" type="text" id="username" name="username" required autocomplete="username">
+      </div>
+      <div class="sh-form-group">
+        <label for="password">Password</label>
+        <input class="sh-input" type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+      <button class="sh-btn" type="submit" id="sh-login-btn">Log in</button>
+    </form>
+
+    <p class="sh-muted" style="margin-top:14px;">
+      No account? <a href="/app/register">Register</a>
+    </p>
+
+    <div class="sh-card" style="background:#fafafa; margin-top:18px;">
+      <strong style="font-size:13px;">Lab test credentials</strong>
+      <table class="sh-table" style="margin-top:8px;">
+        <tr><th>Username</th><th>Password</th><th>Role</th></tr>
+        <tr><td>alice</td><td>password123</td><td>user</td></tr>
+        <tr><td>bob</td><td>password123</td><td>user</td></tr>
+        <tr><td>charlie</td><td>password123</td><td>user (private)</td></tr>
+        <tr><td>admin</td><td>admin123</td><td>admin</td></tr>
+        <tr><td>diana</td><td>diana2024!</td><td>moderator</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}

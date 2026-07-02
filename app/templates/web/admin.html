@@ -1,0 +1,33 @@
+{% extends "web/base.html" %}
+{% block title %}Admin - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container-wide">
+
+  <div id="sh-error" class="sh-error sh-hidden"></div>
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">Platform stats</h2>
+    <div id="sh-stats">
+      <p class="sh-muted">Loading stats...</p>
+    </div>
+  </div>
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">All users</h2>
+    <table class="sh-table">
+      <thead>
+        <tr>
+          <th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Verified</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="sh-users-tbody">
+        <tr><td colspan="6" class="sh-muted">Loading users...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "web/base.html" %}
+{% block title %}SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+  <div class="sh-card" style="text-align:center;">
+    <h2>🔓 Welcome to SocialHack</h2>
+    <p class="sh-muted">Redirecting...</p>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+  window.location.replace(SH.isLoggedIn() ? "/app/feed" : "/app/login");
+</script>
+{% endblock %}

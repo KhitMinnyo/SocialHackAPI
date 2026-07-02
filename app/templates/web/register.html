@@ -1,0 +1,37 @@
+{% extends "web/base.html" %}
+{% block title %}Register - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+  <div class="sh-card">
+    <h2>Create your account</h2>
+    <div id="sh-error" class="sh-error sh-hidden"></div>
+
+    <form id="sh-register-form">
+      <div class="sh-form-group">
+        <label for="username">Username</label>
+        <input class="sh-input" type="text" id="username" name="username" required autocomplete="username">
+      </div>
+      <div class="sh-form-group">
+        <label for="email">Email</label>
+        <input class="sh-input" type="email" id="email" name="email" required autocomplete="email">
+      </div>
+      <div class="sh-form-group">
+        <label for="password">Password</label>
+        <input class="sh-input" type="password" id="password" name="password" required autocomplete="new-password">
+      </div>
+      <div class="sh-form-group">
+        <label for="bio">Bio (optional)</label>
+        <textarea class="sh-textarea" id="bio" name="bio"></textarea>
+      </div>
+      <button class="sh-btn" type="submit" id="sh-register-btn">Sign up</button>
+    </form>
+
+    <p class="sh-muted" style="margin-top:14px;">
+      Already have an account? <a href="/app/login">Log in</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}SocialHack{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="sh-warning-banner">
+  ⚠️ SocialHack is an intentionally vulnerable training app — for use only in your own controlled lab environment.
+</div>
+
+<nav class="sh-nav">
+  <div class="sh-nav-left">
+    <a class="sh-brand" href="/app/feed">🔓 SocialHack</a>
+    <a class="sh-navlink" href="/app/feed">Feed</a>
+    <a class="sh-navlink" data-sh-auth-only href="/app/messages">Messages</a>
+    <a class="sh-navlink" data-sh-admin-only href="/app/admin">Admin</a>
+  </div>
+  <div class="sh-nav-right">
+    <a class="sh-navlink" data-sh-guest-only href="/app/login">Log in</a>
+    <a class="sh-navlink" data-sh-guest-only href="/app/register">Register</a>
+    <a class="sh-navlink" data-sh-auth-only id="sh-nav-profile-link" href="/app/profile/0">
+      👤 <span id="sh-nav-username"></span>
+    </a>
+    <a class="sh-navlink" data-sh-auth-only href="#" id="sh-nav-logout">Log out</a>
+  </div>
+</nav>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

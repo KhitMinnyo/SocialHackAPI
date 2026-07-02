@@ -1,0 +1,30 @@
+id: socialhack-dotenv-exposure
+
+info:
+  name: SocialHack API - Exposed .env File
+  author: socialhack-course
+  severity: critical
+  description: >
+    A .env file containing application secrets (JWT signing key, database
+    URL, cloud/API keys) is directly web-accessible with no authentication.
+  tags: api,exposure,secrets,socialhack
+  reference:
+    - https://cwe.mitre.org/data/definitions/200.html
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/.env"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "JWT_SECRET_KEY"
+          - "AWS_SECRET_ACCESS_KEY"
+        condition: or
+
+      - type: status
+        status:
+          - 200

@@ -1,0 +1,31 @@
+id: socialhack-debug-exposure
+
+info:
+  name: SocialHack API - Debug Endpoint Information Disclosure
+  author: socialhack-course
+  severity: critical
+  description: >
+    The /api/v1/debug endpoint exposes internal secrets including the JWT
+    signing key and database URI with no authentication required. An
+    attacker who finds this can forge admin JWTs and bypass authentication
+    entirely.
+  tags: api,exposure,secrets,socialhack
+  reference:
+    - https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/api/v1/debug"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "jwt_secret"
+        condition: and
+
+      - type: status
+        status:
+          - 200
