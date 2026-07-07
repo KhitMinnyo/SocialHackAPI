@@ -36,11 +36,11 @@ sudo apt install jq
 Bash
 
 ```
-# Install dependencies
-cd api-hacking
+git clone https://github.com/KhitMinnyo/SocialHackAPI.git
+cd SocialHackAPI
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 # Start the API (auto-seeds database)
 python3 run.py
