@@ -305,15 +305,23 @@ POST /api/v1/assistant/chat   Mock LLM assistant (prompt injection, system-promp
                               excessive agency -> BOLA via prose, insecure output). No API key needed.
 ```
 
-#### gRPC Service (separate process — see `grpc-lab/`)
+#### gRPC Service (auto-starts on :50051 — see `grpc-lab/`)
 
 ```
 UserService @ :50051   GetUser / ListUsers (no auth), DeleteUser (spoofable role metadata),
                        server reflection ON, no TLS
 ```
 
-Setup: `cd grpc-lab && pip install grpcio grpcio-tools grpcio-reflection && \
-python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. socialhack.proto && python server.py`
+The gRPC deps are now in the main `requirements.txt`, so **`python run.py`
+auto-starts this service on :50051** alongside the REST API (compiling the stubs
+on first run) — no extra steps:
+
+```
+pip install -r requirements.txt   # already includes grpcio
+python run.py                      # REST :5001 + gRPC :50051
+```
+
+Disable the auto-start with `SOCIALHACK_GRPC=0`. To run standalone instead, see `grpc-lab/README.md`.
 
 #### Supply-Chain Scanning Lab (see `supply-chain-lab/`)
 

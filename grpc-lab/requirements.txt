@@ -1,0 +1,11 @@
+# gRPC lab dependencies — separate from the main Flask app requirements.txt
+# because the gRPC service runs as its own process (see grpc-lab/README.md).
+#
+#   cd grpc-lab
+#   pip install -r requirements.txt
+#   python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. socialhack.proto
+#   python server.py
+
+grpcio==1.82.1
+grpcio-tools==1.82.1
+grpcio-reflection==1.82.1

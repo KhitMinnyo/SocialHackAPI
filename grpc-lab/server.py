@@ -80,7 +80,13 @@ class UserService(socialhack_pb2_grpc.UserServiceServicer):
         return socialhack_pb2.Ack(message=f"deleted user {d['username']}")
 
 
-def serve(port=50051):
+def build_and_start(port=50051):
+    """Build, bind and start the gRPC server WITHOUT blocking.
+
+    Returns the started server object. Used both by serve() (standalone) and by
+    the main Flask app's run.py, which auto-starts the gRPC lab in the same
+    process so `python run.py` brings up both :5001 (REST) and :50051 (gRPC).
+    """
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     socialhack_pb2_grpc.add_UserServiceServicer_to_server(UserService(), server)
 
@@ -93,6 +99,11 @@ def serve(port=50051):
 
     server.add_insecure_port(f"[::]:{port}")  # VULN: no TLS
     server.start()
+    return server
+
+
+def serve(port=50051):
+    server = build_and_start(port)
     print(f"[grpc-lab] UserService listening on :{port} (no auth, reflection on)")
     try:
         while True:

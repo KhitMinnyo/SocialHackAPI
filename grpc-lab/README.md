@@ -5,15 +5,35 @@ run as a **separate process** from the Flask app.
 
 ## Setup
 
+### Option A — auto-start with the main app (recommended)
+
+Once the gRPC dependencies are installed, `python run.py` (the main REST app)
+**automatically starts this gRPC service on :50051 in the same process** — it
+even compiles the `.proto` stubs on first run. You get both `:5001` (REST) and
+`:50051` (gRPC) from one command.
+
+```bash
+pip install -r requirements.txt   # main requirements now includes grpcio
+python run.py                      # starts REST :5001 AND gRPC :50051
+```
+
+(`grpc-lab/requirements.txt` still exists for running this service standalone,
+but the main `requirements.txt` already covers it.)
+
+Look for this line in the banner:
+```
+  🔌 gRPC lab:        localhost:50051 (UserService, reflection on, no auth)
+```
+If grpcio isn't installed, the main app runs fine and just prints a hint. To
+disable the auto-start, set `SOCIALHACK_GRPC=0`.
+
+### Option B — run standalone
+
 ```bash
 cd grpc-lab
-pip install grpcio grpcio-tools grpcio-reflection
-
-# generate stubs from the .proto (creates socialhack_pb2*.py)
+pip install -r requirements.txt
 python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. socialhack.proto
-
-# run the server (listens on :50051)
-python server.py
+python server.py            # listens on :50051
 ```
 
 ## Exploit — with grpcurl (recommended)

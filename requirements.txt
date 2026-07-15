@@ -6,3 +6,10 @@ bcrypt==4.3.0
 requests==2.32.3
 Flask-Sock==0.7.0
 websocket-client==1.8.0
+
+# gRPC lab (Beyond the Lab, Chapter 33). Included here so a single
+# `pip install -r requirements.txt` covers everything and `python run.py`
+# auto-starts the gRPC service on :50051. Disable that with SOCIALHACK_GRPC=0.
+grpcio==1.82.1
+grpcio-tools==1.82.1
+grpcio-reflection==1.82.1
