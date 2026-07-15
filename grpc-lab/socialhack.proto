@@ -1,0 +1,38 @@
+// SocialHack gRPC service — Beyond the Lab extension.
+// Intentionally vulnerable: no authentication, server reflection enabled,
+// and "admin" actions gated only by a client-supplied (spoofable) metadata key.
+
+syntax = "proto3";
+
+package socialhack;
+
+service UserService {
+  // VULN: no auth — anyone who can reach the port can call these.
+  rpc GetUser (UserId) returns (User);
+  rpc ListUsers (Empty) returns (UserList);
+  // VULN: "admin only" but enforced via spoofable metadata (see server.py).
+  rpc DeleteUser (UserId) returns (Ack);
+}
+
+message Empty {}
+
+message UserId {
+  int32 id = 1;
+}
+
+message User {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+  string role = 4;
+  string api_key = 5;          // VULN: sensitive field exposed
+  string internal_notes = 6;   // VULN: sensitive field exposed
+}
+
+message UserList {
+  repeated User users = 1;
+}
+
+message Ack {
+  string message = 1;
+}

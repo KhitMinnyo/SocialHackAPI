@@ -63,6 +63,10 @@ def create_app(config_name="default"):
     from app.routes.otp import otp_bp
     from app.routes.gateway_internal import gateway_bp
     from app.routes.web import web_bp
+    # "Beyond the Lab" extensions (OAuth2/OIDC, AI/LLM, mobile secrets)
+    from app.routes.oauth import oauth_bp
+    from app.routes.ai_assistant import ai_bp
+    from app.routes.mobile import mobile_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(users_bp, url_prefix="/api/v1/users")
@@ -101,6 +105,14 @@ def create_app(config_name="default"):
     # "Gateway"-protected internal endpoints - see fake_gateway_layer() below
     # and Stage 7.7 for the (bypassable) simulated protection.
     app.register_blueprint(gateway_bp, url_prefix="/api/v1")
+
+    # "Beyond the Lab" extensions:
+    #  - OAuth2/OIDC authorization server (vulnerable flows) at /oauth/*
+    #  - Mobile client config / leaked secrets at /mobile/* and /.well-known/*
+    #  - Mock AI/LLM assistant (prompt injection etc.) at /api/v1/assistant/*
+    app.register_blueprint(oauth_bp, url_prefix="")
+    app.register_blueprint(mobile_bp, url_prefix="")
+    app.register_blueprint(ai_bp, url_prefix="/api/v1")
 
     # SocialHack Web UI - a realistic, click-through social media frontend.
     # This blueprint has NO vulnerabilities of its own: it only renders page

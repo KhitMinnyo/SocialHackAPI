@@ -1,0 +1,20 @@
+# SUPPLY-CHAIN LAB — intentionally vulnerable, pinned dependencies.
+#
+# DO NOT install these into the running SocialHack app. This file exists ONLY
+# to be scanned by SCA (Software Composition Analysis) tools so learners see
+# real advisories fire. See supply-chain-lab/README.md.
+#
+# Each pin below is an OLD version with publicly known CVEs. Scan with:
+#     pip install pip-audit
+#     pip-audit -r supply-chain-lab/requirements-vulnerable.txt
+#   or
+#     pip install safety && safety check -r supply-chain-lab/requirements-vulnerable.txt
+
+Flask==0.12.2
+Werkzeug==0.15.2
+Jinja2==2.10
+requests==2.19.1
+urllib3==1.24.1
+PyYAML==5.1
+cryptography==2.3
+Django==2.2.0

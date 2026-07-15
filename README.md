@@ -20,6 +20,7 @@ This course is structured into **8 stages**, taking you from basic concepts to m
 |🔴 **Stage 6**|Advanced Attacks|SQLi, NoSQLi, CMDi, SSRF, JWT, sqlmap Automation|
 |⚫ **Stage 7**|Professional Mastery|GraphQL (+ Advanced Attacks), WebSocket Security, API Gateway Misconfiguration, Full Pentest, Defense Strategies|
 |⚫ **Stage 8**|Additional OWASP Coverage|Unrestricted Business Flows (API6), Improper Inventory Management (API9), Unsafe Consumption of APIs (API10)|
+|🆕 **Beyond the Lab**|Modern API Attack Surface|OAuth2/OIDC flow attacks, Mobile hardcoded secrets, gRPC security, Supply-chain (SCA), AI/LLM API security (see the "Beyond the Lab" section below)|
 
 ## 🚀 Quick Setup
 
@@ -36,11 +37,11 @@ sudo apt install jq
 Bash
 
 ```
-git clone https://github.com/KhitMinnyo/SocialHackAPI.git
-cd SocialHackAPI
+# Install dependencies
+cd api-hacking
 python3 -m venv venv
 source venv/bin/activate
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 # Start the API (auto-seeds database)
 python3 run.py
@@ -266,7 +267,64 @@ GET  /swagger          HTML docs viewer for the same leaked spec
 ```
 
 
-## 🛡️ Embedded Vulnerabilities (22 Types)
+### 🆕 Beyond the Lab — Modern API Attack Surface
+
+These are **new extensions** added on top of the original 8-stage course, covering
+current API-security topics the core REST/GraphQL/WebSocket labs don't touch.
+
+#### OAuth2 / OIDC Authorization Server (vulnerable flows!)
+
+Plaintext
+
+```
+GET  /oauth/authorize     Authorization Code flow (loose redirect_uri = code theft!)
+POST /oauth/token         Exchange code -> full API token (no PKCE/client_secret enforce, code replay!)
+GET  /oauth/userinfo      OIDC userinfo (no scope enforcement)
+```
+
+> Registered client: `socialhack-mobile`. The resource owner is identified for lab
+> purposes by an existing SocialHack JWT (`?token=` or `Authorization: Bearer`).
+> Add `&debug=1` to `/oauth/authorize` to get the code as JSON instead of a 302.
+
+#### Mobile Client Config (hardcoded secrets!)
+
+Plaintext
+
+```
+GET  /mobile/config                     Runtime config with shipped secrets (client_secret, master key!)
+GET  /.well-known/mobile-config.json    Same config, conventional path (fuzzable)
+GET  /mobile/strings.xml                Simulated apktool-recovered Android strings.xml
+```
+
+#### AI / LLM Assistant (prompt injection, OWASP LLM Top 10!)
+
+Plaintext
+
+```
+POST /api/v1/assistant/chat   Mock LLM assistant (prompt injection, system-prompt leak,
+                              excessive agency -> BOLA via prose, insecure output). No API key needed.
+```
+
+#### gRPC Service (separate process — see `grpc-lab/`)
+
+```
+UserService @ :50051   GetUser / ListUsers (no auth), DeleteUser (spoofable role metadata),
+                       server reflection ON, no TLS
+```
+
+Setup: `cd grpc-lab && pip install grpcio grpcio-tools grpcio-reflection && \
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. socialhack.proto && python server.py`
+
+#### Supply-Chain Scanning Lab (see `supply-chain-lab/`)
+
+```
+supply-chain-lab/requirements-vulnerable.txt   Known-CVE pinned deps for SCA scanning
+                                               (pip-audit / safety / Trivy)
+```
+
+Scan: `pip install pip-audit && pip-audit --no-deps -r supply-chain-lab/requirements-vulnerable.txt`
+
+## 🛡️ Embedded Vulnerabilities (30 Types)
 
 |**#**|**Vulnerability**|**OWASP Category**|**Endpoint Example**|
 |---|---|---|---|
@@ -292,6 +350,18 @@ GET  /swagger          HTML docs viewer for the same leaked spec
 |20|Rate-Limit Bypass (spoofable trust header)|API4:2023|otp/request (X-Forwarded-For spoofing)|
 |21|Cross-Site WebSocket Hijacking (no Origin check, cosmetic auth)|API2:2023|ws/chat|
 |22|API Gateway Misconfiguration (trailing-slash, route alias, spoofable header)|API8:2023|gateway-internal/stats, internal/infra-stats|
+|23|OAuth2 redirect_uri manipulation (code theft)|—|oauth/authorize|
+|24|OAuth2 code replay / no PKCE / no client auth|—|oauth/token|
+|25|Hardcoded secrets in mobile client|—|mobile/config, mobile/strings.xml|
+|26|gRPC no-auth + reflection + spoofable metadata trust|—|grpc-lab (UserService @ :50051)|
+|27|Vulnerable dependencies (supply chain)|—|supply-chain-lab/requirements-vulnerable.txt|
+|28|LLM Prompt Injection + System-Prompt Leak|LLM01/LLM07|assistant/chat|
+|29|LLM Excessive Agency (BOLA via prose)|LLM08|assistant/chat|
+|30|LLM Insecure Output Handling|LLM02|assistant/chat|
+
+> 🆕 **Beyond-the-Lab update:** rows #23–30 are new modern-API extensions (OAuth2/OIDC,
+> mobile secrets, gRPC, supply chain, AI/LLM). LLM rows map to the **OWASP Top 10 for LLM
+> Applications** (a separate framework from the API Security Top 10).
 
 > 📝 **Correction (Stage 8 update):** row #6 (Mass Assignment) was previously mislabeled `API6:2023`
 > in this table — it has been corrected to `API3:2023 - Broken Object Property Level Authorization`,
