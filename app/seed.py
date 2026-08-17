@@ -105,6 +105,55 @@ def seed_database():
     diana.followed.append(bob)
     db.session.commit()
 
+    # ========== FILLER USERS ==========
+    # Twenty background accounts that exist purely to pad follower counts.
+    #
+    # Why: alice/bob/diana/admin are pre-seeded below with is_verified=True
+    # as backstory (already-verified accounts - see ch15-business-flows.md),
+    # but the actual verified-badge business rule is follower-count based
+    # (VERIFIED_BADGE_FOLLOWER_THRESHOLD = 5 in promotions.py). With only
+    # the 5 named characters following each other, nobody can reach more
+    # than 4 followers - so those "already verified" accounts looked
+    # inconsistent with the very rule they supposedly passed. These filler
+    # accounts close that gap so the seeded state actually satisfies the
+    # rule the book documents. They are NOT part of the attack story and
+    # never need to be logged into.
+    filler_names = [
+        "emma", "liam", "noah", "olivia", "ava", "sophia", "mason", "isabella",
+        "ethan", "mia", "james", "amelia", "lucas", "harper", "jackson",
+        "evelyn", "aiden", "abigail", "henry", "emily",
+    ]
+    fillers = [
+        User(
+            username=name,
+            email=f"{name}@socialhack.local",
+            password_hash=hash_password("password123"),
+            bio="Just here for the feed 👋",
+            role="user",
+            is_verified=False,
+            is_private=False,
+        )
+        for name in filler_names
+    ]
+    db.session.add_all(fillers)
+    db.session.commit()
+
+    # Distribute filler follows so alice/bob/diana/admin genuinely clear
+    # the 5-follower threshold (they already have 2/2/1/0 followers from
+    # each other, from the block above). charlie is deliberately left
+    # alone - she stays under the threshold, matching is_verified=False.
+    extra_followers_needed = [
+        (admin_user, 6),
+        (diana, 5),
+        (alice, 4),
+        (bob, 4),
+    ]
+    filler_iter = iter(fillers)
+    for target_user, extra_needed in extra_followers_needed:
+        for _ in range(extra_needed):
+            next(filler_iter).followed.append(target_user)
+    db.session.commit()
+
     # ========== POSTS ==========
     posts = [
         Post(
@@ -250,7 +299,7 @@ def seed_database():
     db.session.commit()
 
     print("[+] Database seeded successfully!")
-    print(f"    Users: {User.query.count()}")
+    print(f"    Users: {User.query.count()} (including {len(fillers)} background filler accounts)")
     print(f"    Posts: {Post.query.count()}")
     print(f"    Comments: {Comment.query.count()}")
     print(f"    Messages: {Message.query.count()}")
