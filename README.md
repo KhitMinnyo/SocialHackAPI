@@ -61,10 +61,9 @@ A real, click-through social media frontend now lives at `/app` — register or 
 
 **The UI itself has zero intentional vulnerabilities.** Every click/form submit calls the same `/api/v1/*` JSON API documented below via `fetch()`, so pointing Burp Suite (or your browser's DevTools Network tab) at the browser and clicking around surfaces the exact same requests you've been crafting by hand with curl/Postman throughout this course — see Tutorial 2.5. Action buttons (edit/delete, the "Admin" nav link) are only shown when the logged-in user "should" see them client-side, but since the underlying API endpoints mostly don't enforce that server-side either, navigating directly (e.g. typing `/app/admin` or `/app/profile/<id>` into the URL bar) reproduces the course's BOLA/BFLA lessons through the UI itself.
 
-### 📄 Cheat Sheets & Quizzes
+### 📄 Cheat Sheets
 
 - `cheatsheets/stage-N-cheatsheet.md` — 1-page curl/payload quick reference per stage (1–8)
-- `quizzes/stage-N-quiz.md` — 5-8 MCQ checkpoint quiz per stage, answers hidden in `<details>` blocks
 - `nuclei-templates/*.yaml` — custom nuclei templates targeting this app's own vulnerabilities (Tutorial 3.6)
 
 ## 🔑 Test Credentials
