@@ -63,10 +63,11 @@ def create_app(config_name="default"):
     from app.routes.otp import otp_bp
     from app.routes.gateway_internal import gateway_bp
     from app.routes.web import web_bp
-    # "Beyond the Lab" extensions (OAuth2/OIDC, AI/LLM, mobile secrets)
+    # "Beyond the Lab" extensions (OAuth2/OIDC, AI/LLM, mobile secrets, MCP)
     from app.routes.oauth import oauth_bp
     from app.routes.ai_assistant import ai_bp
     from app.routes.mobile import mobile_bp
+    from app.routes.mcp_tools import mcp_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(users_bp, url_prefix="/api/v1/users")
@@ -110,9 +111,11 @@ def create_app(config_name="default"):
     #  - OAuth2/OIDC authorization server (vulnerable flows) at /oauth/*
     #  - Mobile client config / leaked secrets at /mobile/* and /.well-known/*
     #  - Mock AI/LLM assistant (prompt injection etc.) at /api/v1/assistant/*
+    #  - MCP server (tool-call BOLA, tool description poisoning) at /api/v1/mcp*
     app.register_blueprint(oauth_bp, url_prefix="")
     app.register_blueprint(mobile_bp, url_prefix="")
     app.register_blueprint(ai_bp, url_prefix="/api/v1")
+    app.register_blueprint(mcp_bp, url_prefix="/api/v1")
 
     # SocialHack Web UI - a realistic, click-through social media frontend.
     # This blueprint has NO vulnerabilities of its own: it only renders page

@@ -20,7 +20,7 @@ This course is structured into **8 stages**, taking you from basic concepts to m
 |🔴 **Stage 6**|Advanced Attacks|SQLi, NoSQLi, CMDi, SSRF, JWT, sqlmap Automation|
 |⚫ **Stage 7**|Professional Mastery|GraphQL (+ Advanced Attacks), WebSocket Security, API Gateway Misconfiguration, Full Pentest, Defense Strategies|
 |⚫ **Stage 8**|Additional OWASP Coverage|Unrestricted Business Flows (API6), Improper Inventory Management (API9), Unsafe Consumption of APIs (API10)|
-|🆕 **Beyond the Lab**|Modern API Attack Surface|OAuth2/OIDC flow attacks, Mobile hardcoded secrets, gRPC security, Supply-chain (SCA), AI/LLM API security (see the "Beyond the Lab" section below)|
+|🆕 **Beyond the Lab**|Modern API Attack Surface|OAuth2/OIDC flow attacks, Mobile hardcoded secrets, gRPC security, Supply-chain (SCA), AI/LLM API security, MCP tool-call security (see the "Beyond the Lab" section below)|
 
 ## 🚀 Quick Setup
 
@@ -332,7 +332,24 @@ supply-chain-lab/requirements-vulnerable.txt   Known-CVE pinned deps for SCA sca
 
 Scan: `pip install pip-audit && pip-audit --no-deps -r supply-chain-lab/requirements-vulnerable.txt`
 
-## 🛡️ Embedded Vulnerabilities (30 Types)
+#### MCP (Model Context Protocol) Server (tool-call BOLA + tool description poisoning!)
+
+```
+POST /api/v1/mcp             JSON-RPC 2.0 (initialize / tools/list / tools/call)
+POST /api/v1/mcp/agent-demo  Lab-only helper - simulates a naive MCP client agent
+```
+
+Hand-rolled MCP server (`app/routes/mcp_tools.py`, no external MCP SDK) exposing three
+tools. `get_user_profile` takes a caller-supplied `user_id` argument with no ownership
+check (BOLA, same bug class as `users.py`, reached via a tool-call argument instead of a
+URL segment). `summarize_post`'s **description** field (the metadata an MCP client's LLM
+reads to decide how to use a tool) contains a hidden instruction telling the agent to
+silently also call `get_user_profile` on the admin account and exfiltrate its `api_key` -
+tool description poisoning, a.k.a. "line jumping". `/api/v1/mcp/agent-demo` plays the role
+of a naive tool-description-trusting client (the same honesty trade-off as
+`ai_assistant.py`'s prompt-injection stub) so the poisoning is provable without a real LLM.
+
+## 🛡️ Embedded Vulnerabilities (32 Types)
 
 |**#**|**Vulnerability**|**OWASP Category**|**Endpoint Example**|
 |---|---|---|---|
@@ -366,10 +383,13 @@ Scan: `pip install pip-audit && pip-audit --no-deps -r supply-chain-lab/requirem
 |28|LLM Prompt Injection + System-Prompt Leak|LLM01/LLM07|assistant/chat|
 |29|LLM Excessive Agency (BOLA via prose)|LLM08|assistant/chat|
 |30|LLM Insecure Output Handling|LLM02|assistant/chat|
+|31|MCP Tool-Call Authorization Bypass (BOLA via tool arguments)|—|mcp (get_user_profile)|
+|32|MCP Tool Description Poisoning ("line jumping")|—|mcp (summarize_post), mcp/agent-demo|
 
-> 🆕 **Beyond-the-Lab update:** rows #23–30 are new modern-API extensions (OAuth2/OIDC,
-> mobile secrets, gRPC, supply chain, AI/LLM). LLM rows map to the **OWASP Top 10 for LLM
-> Applications** (a separate framework from the API Security Top 10).
+> 🆕 **Beyond-the-Lab update:** rows #23–32 are new modern-API extensions (OAuth2/OIDC,
+> mobile secrets, gRPC, supply chain, AI/LLM, MCP). LLM rows map to the **OWASP Top 10 for
+> LLM Applications** (a separate framework from the API Security Top 10); MCP rows are a
+> tool-call-layer variant of the existing BOLA (API1) and prompt-injection concepts.
 
 > 📝 **Correction (Stage 8 update):** row #6 (Mass Assignment) was previously mislabeled `API6:2023`
 > in this table — it has been corrected to `API3:2023 - Broken Object Property Level Authorization`,
