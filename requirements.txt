@@ -13,3 +13,9 @@ websocket-client==1.8.0
 grpcio==1.82.1
 grpcio-tools==1.82.1
 grpcio-reflection==1.82.1
+
+# XXE lab (v2.0 book, Chapter 23). lxml provides the vulnerable XML parser
+# (resolve_entities/load_dtd config) and defusedxml the hardened alternative
+# used in the remediation demo.
+lxml==5.3.0
+defusedxml==0.7.1

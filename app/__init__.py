@@ -69,6 +69,8 @@ def create_app(config_name="default"):
     from app.routes.mobile import mobile_bp
     from app.routes.mcp_tools import mcp_bp
     from app.routes.xss_lab import xss_lab_bp
+    # v2.0 book (Chapter 29): legacy cookie-session endpoints for the CSRF lab
+    from app.routes.settings import settings_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(users_bp, url_prefix="/api/v1/users")
@@ -121,6 +123,7 @@ def create_app(config_name="default"):
     app.register_blueprint(ai_bp, url_prefix="/api/v1")
     app.register_blueprint(mcp_bp, url_prefix="/api/v1")
     app.register_blueprint(xss_lab_bp, url_prefix="")
+    app.register_blueprint(settings_bp, url_prefix="/api/v1")
 
     # SocialHack Web UI - a realistic, click-through social media frontend.
     # This blueprint has NO vulnerabilities of its own: it only renders page

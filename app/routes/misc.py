@@ -260,3 +260,85 @@ def list_webhooks():
         "total": len(_webhooks),
         "webhooks": list(_webhooks.values()),
     }), 200
+
+
+# ===========================================================================
+# HPP / CONTENT-TYPE CONFUSION (v2.0 book, Chapter 17.5)
+# ===========================================================================
+
+@misc_bp.route("/tools/report", methods=["GET", "POST"])
+@token_required
+def generate_report():
+    """Generate an account report.
+
+    VULNERABILITY: HTTP Parameter Pollution + Content-Type Confusion.
+    A "gateway policy" (simulated inline - see the honest simplification
+    note below) is supposed to block scope=all from untrusted callers,
+    but:
+
+    1. HPP - the policy validates only the FIRST 'scope' parameter while
+       this handler acts on the LAST one (?scope=me&scope=all passes).
+    2. Content-Type Confusion - the policy inspects application/json
+       bodies only; the same field sent as form-urlencoded is parsed by
+       the backend but never seen by the policy.
+
+    SIMPLIFICATION (like routes/gateway_internal.py): there is only ONE
+    HTTP parser here (Werkzeug), so the "policy view" is simulated by
+    deliberately reading the first duplicate / json-only body. A real
+    deployment has two independent parsers disagreeing - same bug class.
+    """
+    # --- what the simulated gateway policy sees ---
+    raw_pairs = [p.split("=", 1) for p in request.query_string.decode().split("&") if "=" in p]
+    query_scopes = [v for k, v in raw_pairs if k == "scope"]
+
+    content_type = request.content_type or ""
+    if request.is_json:
+        body_scope = (request.get_json(silent=True) or {}).get("scope")
+        policy_inspects_body = True
+    elif "form-urlencoded" in content_type:
+        body_scope = request.form.get("scope")
+        policy_inspects_body = False          # ❌ form bodies are never inspected
+    else:
+        body_scope = None
+        policy_inspects_body = False
+
+    # Policy decision: based on FIRST query value + JSON body only
+    policy_visible_scopes = []
+    if query_scopes:
+        policy_visible_scopes.append(query_scopes[0])     # ❌ ignores duplicates
+    if policy_inspects_body and body_scope:
+        policy_visible_scopes.append(body_scope)
+
+    # --- what the handler actually acts on ---
+    # ❌ VULNERABILITY: LAST duplicate wins inside the handler
+    if query_scopes:
+        effective_scope = query_scopes[-1]
+    elif body_scope:
+        effective_scope = body_scope
+    else:
+        effective_scope = "me"
+
+    policy_blocked = any(s == "all" for s in policy_visible_scopes)
+    if policy_blocked and effective_scope == "all":
+        return jsonify({"error": "scope=all is not allowed for your role"}), 403
+
+    if effective_scope == "all":
+        # 🚩 Bypassed: full user directory leak
+        users = User.query.all()
+        return jsonify({
+            "report_type": "full_directory",
+            "bypass": {
+                "gateway_policy_saw": policy_visible_scopes or ["(nothing)"],
+                "handler_actually_used": effective_scope,
+                "content_type_inspected_by_policy": policy_inspects_body,
+            },
+            "count": len(users),
+            "users": [{"id": u.id, "username": u.username, "email": u.email} for u in users],
+        }), 200
+
+    return jsonify({
+        "report_type": "own_account_summary",
+        "note": "Try ?scope=me&scope=all (HPP) or send scope=all as "
+                "application/x-www-form-urlencoded (content-type confusion).",
+        "user_id": request.current_user_id,
+    }), 200

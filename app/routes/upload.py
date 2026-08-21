@@ -124,3 +124,51 @@ def export_profile():
     }
 
     return jsonify(export_data), 200
+
+
+# ===========================================================================
+# FILE UPLOAD - PATH TRAVERSAL + UNRESTRICTED TYPE (v2.0 book, Chapter 24)
+# ===========================================================================
+
+@upload_bp.route("/upload/document", methods=["POST"])
+@token_required
+def upload_document():
+    """Upload a document attachment (multipart form).
+
+    VULNERABILITY: Path Traversal + Unrestricted File Upload.
+    The client-supplied filename is joined directly into the storage path
+    (so '../../' escapes the uploads directory) and there is no extension
+    or content-type allowlist, so .py/.svg/anything can be stored and
+    served back. Contrast with /upload/avatar above, which generates its
+    own filename but has the SSRF bug instead.
+
+    Payload example:
+        curl -F 'file=@note.txt;filename=../../app/INJECTED.txt'
+    """
+    if "file" not in request.files:
+        return jsonify({"error": "file field required (multipart form)"}), 400
+
+    file = request.files["file"]
+
+    # VULNERABILITY 1: client-controlled filename used verbatim -
+    # 'filename=../../app/config.py' writes OUTSIDE the uploads folder
+    # because os.path.join() does not normalize '..'.
+    filename = file.filename
+
+    # VULNERABILITY 2: no extension allowlist (.py/.svg/.html all accepted)
+    # VULNERABILITY 3: Content-Type header trusted, magic bytes never checked
+
+    upload_dir = current_app.config.get("UPLOAD_FOLDER", "uploads")
+    os.makedirs(upload_dir, exist_ok=True)
+    filepath = os.path.join(upload_dir, filename)
+
+    try:
+        file.save(filepath)
+    except Exception as e:
+        return jsonify({"error": f"Save failed: {str(e)}"}), 500
+
+    return jsonify({
+        "message": "Document uploaded successfully",
+        "path": f"/uploads/{filename}",
+        "size": os.path.getsize(filepath),
+    }), 201

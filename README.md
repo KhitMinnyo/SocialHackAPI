@@ -390,7 +390,7 @@ followers via `GET /api/v1/users/:id/followers`, then loop `POST /api/v1/message
 against every one of them. Full runnable walkthrough in
 `cheatsheets/beyond-lab-xss-oauth-cheatsheet.md`.
 
-## 🛡️ Embedded Vulnerabilities (34 Types)
+## 🛡️ Embedded Vulnerabilities (38 Types)
 
 |**#**|**Vulnerability**|**OWASP Category**|**Endpoint Example**|
 |---|---|---|---|
@@ -428,6 +428,16 @@ against every one of them. Full runnable walkthrough in
 |32|MCP Tool Description Poisoning ("line jumping")|—|mcp (summarize_post), mcp/agent-demo|
 |33|Stored XSS → Session/Token Theft (unescaped render, token in localStorage)|API8:2023|xss-lab/widget/:id, xss-lab/collect|
 |34|OAuth Excessive Scope Grant → Automated Contact/Message Spam|API6:2023|oauth (quizapp-fun-2000 client) + messages (no rate limit)|
+|35|XXE Injection (file read / SSRF via XML entity)|—|integrations/xml-import (lxml resolve_entities)|
+|36|Path Traversal / Unrestricted File Upload|—|upload/document (client filename, no allowlist)|
+|37|CSRF (cookie-session state-changing endpoint)|—|settings/update (no CSRF token / Origin check)|
+|38|HPP / Content-Type Confusion (parser differential)|API8:2023|tools/report (duplicate scope param, form-encoded bypass)|
+
+> 🆕 **v2.0 book update:** rows #35–38 accompany the v2.0 book's new chapters
+> (23 XXE, 24 File Upload, 29 CSRF, 17.5 HPP/Content-Type Confusion) plus the
+> Authorization-Matrix additions to the BOLA/BFLA chapters and the Bug-Bounty
+> workflow in the Reporting chapter. All four new endpoints were live-tested
+> (2026-08-21) against the curl payloads printed in those chapters.
 
 > 🆕 **Beyond-the-Lab update:** rows #23–34 are new modern-API extensions (OAuth2/OIDC,
 > mobile secrets, gRPC, supply chain, AI/LLM, MCP, stored XSS, OAuth scope abuse). LLM rows

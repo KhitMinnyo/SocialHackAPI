@@ -19,6 +19,7 @@ response fields are mass-assigned straight onto the local user record.
 
 import requests as http_requests
 from flask import Blueprint, request, jsonify
+from lxml import etree
 from app import db
 from app.models import User
 from app.utils import token_required
@@ -131,4 +132,49 @@ def get_exchange_rate():
         "provider": provider_url,
         "raw_response": payload,
         "rate": payload.get("rate") if isinstance(payload, dict) else None,
+    }), 200
+
+
+# ===========================================================================
+# XXE INJECTION (v2.0 book, Chapter 23)
+# ===========================================================================
+
+@integrations_bp.route("/integrations/xml-import", methods=["POST"])
+@token_required
+def xml_import():
+    """Import a profile from a legacy partner that still speaks XML.
+
+    VULNERABILITY: XXE (XML External Entity) - the XML body is parsed with
+    an lxml parser configured to resolve external entities, so an attacker
+    can read local files (file://), probe internal services (http://), or
+    DoS the server via entity-expansion ("billion laughs").
+
+    Payload examples:
+        <!DOCTYPE profile [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+        <profile><username>&xxe;</username></profile>
+    """
+    raw = request.get_data()
+    if not raw:
+        return jsonify({
+            "error": "XML body required. Send Content-Type: application/xml "
+                     "with <profile><username>...</username></profile>"
+        }), 400
+
+    # VULNERABILITY: DTD processing + external entity resolution enabled.
+    # Safe-by-default parsers (e.g. defusedxml) reject this class of input.
+    try:
+        parser = etree.XMLParser(
+            resolve_entities=True,   # ❌ substitute &xxe; with fetched content
+            load_dtd=True,           # ❌ parse inline <!DOCTYPE ...> definitions
+            no_network=False,        # ❌ allow http:// / file:// fetches
+        )
+        root = etree.fromstring(raw, parser)
+    except etree.XMLSyntaxError as e:
+        return jsonify({"error": f"Invalid XML: {str(e)}"}), 400
+
+    return jsonify({
+        "imported": True,
+        "message": "Profile imported from legacy partner XML",
+        "username": root.findtext("username"),
+        "bio": root.findtext("bio"),
     }), 200
