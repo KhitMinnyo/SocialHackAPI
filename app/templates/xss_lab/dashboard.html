@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Attacker Collector Dashboard - SocialHack XSS Lab</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 820px; margin: 40px auto; padding: 0 16px; color: #222; }
+    .sh-lab-banner { background:#fdecea; border:1px solid #f5b3ac; padding:10px 14px; border-radius:6px; margin-bottom:20px; font-size:14px; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { text-align:left; padding:8px; border-bottom:1px solid #eee; font-size:13px; word-break:break-all; vertical-align:top; }
+    code { background:#f3f3f3; padding:1px 5px; border-radius:3px; }
+  </style>
+</head>
+<body>
+  <div class="sh-lab-banner">
+    ⚠️ This page plays the role of an <strong>attacker's own server</strong>, kept local to this
+    lab so nothing ever leaves your machine. Everything below was POSTed to
+    <code>/api/v1/xss-lab/collect</code> by a widget's injected payload.
+  </div>
+  <h2>Captured payloads ({{ captured|length }})</h2>
+  {% if not captured %}
+    <p>Nothing captured yet. Create a widget whose payload <code>fetch()</code>es this endpoint, then open the widget's view URL in a browser where you're logged into <code>/app</code>.</p>
+  {% else %}
+  <table>
+    <tr><th>Received (unix time)</th><th>Source IP</th><th>Payload</th></tr>
+    {% for c in captured %}
+    <tr>
+      <td>{{ c.received_at }}</td>
+      <td>{{ c.source_ip }}</td>
+      <td><code>{{ c.payload }}</code></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</body>
+</html>

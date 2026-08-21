@@ -41,6 +41,21 @@ OAUTH_CLIENTS = {
         "redirect_uris": ["http://localhost:5001/app/oauth/callback"],
         "name": "SocialHack Official Mobile App",
     },
+    # VULNERABILITY / lab narrative: any third party can get a client_id
+    # registered here (there is no vetting step modeled in this lab) and
+    # request whatever `scope` it likes at /authorize - see vulnerability #6
+    # above ("Requested scope is trusted blindly"). This is the OAuth side of
+    # the "malicious quiz app / bot" pattern real attackers use on platforms
+    # like Facebook and Discord: the app LOOKS harmless, gets authorized with
+    # an over-broad scope because there is no real consent screen, and the
+    # resulting token has full API access regardless of what scope was
+    # requested. See cheatsheets/beyond-lab-xss-oauth-cheatsheet.md for the
+    # full walkthrough (through to spamming the victim's followers).
+    "quizapp-fun-2000": {
+        "client_secret": "quizapp_client_secret_leaked_00",
+        "redirect_uris": ["https://quizapp-fun-2000.example/oauth/callback"],
+        "name": '"Which SocialHack Personality Are You?" Quiz (unverified 3rd-party app)',
+    },
 }
 
 # In-memory issued authorization codes: code -> metadata

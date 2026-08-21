@@ -68,6 +68,7 @@ def create_app(config_name="default"):
     from app.routes.ai_assistant import ai_bp
     from app.routes.mobile import mobile_bp
     from app.routes.mcp_tools import mcp_bp
+    from app.routes.xss_lab import xss_lab_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(users_bp, url_prefix="/api/v1/users")
@@ -112,10 +113,14 @@ def create_app(config_name="default"):
     #  - Mobile client config / leaked secrets at /mobile/* and /.well-known/*
     #  - Mock AI/LLM assistant (prompt injection etc.) at /api/v1/assistant/*
     #  - MCP server (tool-call BOLA, tool description poisoning) at /api/v1/mcp*
+    #  - Stored XSS -> token theft lab (self-contained) at /xss-lab/* and
+    #    /api/v1/xss-lab/* - see app/routes/xss_lab.py. Isolated from the
+    #    web UI below, which stays free of intentional vulnerabilities.
     app.register_blueprint(oauth_bp, url_prefix="")
     app.register_blueprint(mobile_bp, url_prefix="")
     app.register_blueprint(ai_bp, url_prefix="/api/v1")
     app.register_blueprint(mcp_bp, url_prefix="/api/v1")
+    app.register_blueprint(xss_lab_bp, url_prefix="")
 
     # SocialHack Web UI - a realistic, click-through social media frontend.
     # This blueprint has NO vulnerabilities of its own: it only renders page

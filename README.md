@@ -64,6 +64,7 @@ A real, click-through social media frontend now lives at `/app` — register or 
 ### 📄 Cheat Sheets
 
 - `cheatsheets/stage-N-cheatsheet.md` — 1-page curl/payload quick reference per stage (1–8)
+- `cheatsheets/beyond-lab-xss-oauth-cheatsheet.md` — stored-XSS token theft + OAuth contact-spam walkthrough
 - `nuclei-templates/*.yaml` — custom nuclei templates targeting this app's own vulnerabilities (Tutorial 3.6)
 
 ## 🔑 Test Credentials
@@ -348,7 +349,48 @@ tool description poisoning, a.k.a. "line jumping". `/api/v1/mcp/agent-demo` play
 of a naive tool-description-trusting client (the same honesty trade-off as
 `ai_assistant.py`'s prompt-injection stub) so the poisoning is provable without a real LLM.
 
-## 🛡️ Embedded Vulnerabilities (32 Types)
+#### Stored XSS → Session/Token Theft Lab (self-contained, isolated from `/app`!)
+
+```
+POST /api/v1/xss-lab/widgets            Post a "guestbook" widget (unescaped content!)
+GET  /api/v1/xss-lab/widgets/:id        Raw JSON view of a widget
+GET  /xss-lab/widget/:id                Renders the widget - the page a "victim" opens
+POST /api/v1/xss-lab/collect            Unauthenticated "attacker collector" (no real infra needed)
+GET  /xss-lab/attacker-dashboard        Shows everything the collector has received
+```
+
+`app/routes/xss_lab.py` teaches the mechanism behind the very common real-world pattern
+of a hijacked session on a messaging platform: a widget's `content` is rendered with
+Jinja2's `| safe` filter (no escaping), so an attacker-authored `<script>` executes for
+whoever opens `/xss-lab/widget/:id`. Because SocialHack's JWT lives in `localStorage`
+(see `static/js/app.js`) and this lab shares the same origin as `/app`, the injected
+script can read `localStorage.getItem('socialhack_token')` and POST it to
+`/api/v1/xss-lab/collect` — an in-app stand-in for an attacker's own server, so the full
+injection → exfiltration → reuse chain works with zero external infrastructure and zero
+real user data. Deliberately kept **out** of `/app/*`, which stays free of intentional
+vulnerabilities (see `app/routes/web.py`'s docstring). See
+`cheatsheets/beyond-lab-xss-oauth-cheatsheet.md` for the full walkthrough, including how
+a stolen/over-scoped token feeds directly into the OAuth contact-spam lab below.
+
+#### OAuth Contact-Spam Lab (malicious 3rd-party app abusing granted scope)
+
+Extends the OAuth2/OIDC server above with a second registered client in
+`OAUTH_CLIENTS` (`app/routes/oauth.py`):
+
+```
+quizapp-fun-2000   "Which SocialHack Personality Are You?" Quiz (unverified 3rd-party app)
+```
+
+No new backend vulnerability is needed — it reuses vulnerability #6 above (requested
+`scope` is trusted blindly, no real consent screen) plus the existing `messages` BOLA
+(no rate limit, no privacy check) to demonstrate exactly why a scammy Discord/Facebook
+"quiz" or bot app can message a victim's entire contact list within seconds of being
+authorized: get a token via `/oauth/authorize` + `/oauth/token`, list the victim's
+followers via `GET /api/v1/users/:id/followers`, then loop `POST /api/v1/messages`
+against every one of them. Full runnable walkthrough in
+`cheatsheets/beyond-lab-xss-oauth-cheatsheet.md`.
+
+## 🛡️ Embedded Vulnerabilities (34 Types)
 
 |**#**|**Vulnerability**|**OWASP Category**|**Endpoint Example**|
 |---|---|---|---|
@@ -384,11 +426,16 @@ of a naive tool-description-trusting client (the same honesty trade-off as
 |30|LLM Insecure Output Handling|LLM02|assistant/chat|
 |31|MCP Tool-Call Authorization Bypass (BOLA via tool arguments)|—|mcp (get_user_profile)|
 |32|MCP Tool Description Poisoning ("line jumping")|—|mcp (summarize_post), mcp/agent-demo|
+|33|Stored XSS → Session/Token Theft (unescaped render, token in localStorage)|API8:2023|xss-lab/widget/:id, xss-lab/collect|
+|34|OAuth Excessive Scope Grant → Automated Contact/Message Spam|API6:2023|oauth (quizapp-fun-2000 client) + messages (no rate limit)|
 
-> 🆕 **Beyond-the-Lab update:** rows #23–32 are new modern-API extensions (OAuth2/OIDC,
-> mobile secrets, gRPC, supply chain, AI/LLM, MCP). LLM rows map to the **OWASP Top 10 for
-> LLM Applications** (a separate framework from the API Security Top 10); MCP rows are a
-> tool-call-layer variant of the existing BOLA (API1) and prompt-injection concepts.
+> 🆕 **Beyond-the-Lab update:** rows #23–34 are new modern-API extensions (OAuth2/OIDC,
+> mobile secrets, gRPC, supply chain, AI/LLM, MCP, stored XSS, OAuth scope abuse). LLM rows
+> map to the **OWASP Top 10 for LLM Applications** (a separate framework from the API
+> Security Top 10); MCP rows are a tool-call-layer variant of the existing BOLA (API1) and
+> prompt-injection concepts; #33–34 tie directly together (a stolen or over-scoped token
+> reused to mass-message a victim's contacts) and mirror how real account-takeover scams
+> spread on messaging platforms.
 
 > 📝 **Correction (Stage 8 update):** row #6 (Mass Assignment) was previously mislabeled `API6:2023`
 > in this table — it has been corrected to `API3:2023 - Broken Object Property Level Authorization`,
