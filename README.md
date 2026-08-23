@@ -33,6 +33,10 @@ brew install jq
 # Ubuntu/Debian
 sudo apt install jq
 ```
+For Kali & Debian users
+```
+sudo apt install -y libxml2-dev libxslt1-dev python3-dev build-essential 
+```
 
 Initial Setup
 
