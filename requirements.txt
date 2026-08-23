@@ -1,6 +1,4 @@
-Flask==3.1.1 
-flask 
-
+Flask==3.1.1
 Flask-SQLAlchemy==3.1.1
 Flask-CORS==5.0.1
 PyJWT==2.10.1
@@ -12,12 +10,28 @@ websocket-client==1.8.0
 # gRPC lab (Beyond the Lab, Chapter 33). Included here so a single
 # `pip install -r requirements.txt` covers everything and `python run.py`
 # auto-starts the gRPC service on :50051. Disable that with SOCIALHACK_GRPC=0.
-grpcio==1.82.1
-grpcio-tools==1.82.1
-grpcio-reflection==1.82.1
+# Kept as a RANGE (not an exact pin) unlike the packages above: grpcio only
+# ships wheels for a subset of platform/Python combos per exact version, so
+# an exact pin here (e.g. grpcio==1.82.1) can fail to install with "No
+# matching distribution found" on some machines even though a compatible
+# 1.x build exists. The lab's gRPC vulnerabilities (ch33) are stable across
+# the whole 1.6x-1.8x line, so a range doesn't put the lesson at risk the
+# way ranging Flask/PyJWT/SQLAlchemy above would.
+grpcio>=1.60.0,<2.0.0
+grpcio-tools>=1.60.0,<2.0.0
+grpcio-reflection>=1.60.0,<2.0.0
 
 # XXE lab (v2.0 book, Chapter 23). lxml provides the vulnerable XML parser
 # (resolve_entities/load_dtd config) and defusedxml the hardened alternative
 # used in the remediation demo.
-lxml==5.3.0
+#
+# lxml is a RANGE, not an exact pin, for the same reason as grpcio above:
+# it's a C extension built against libxml2, and an old exact pin's Cython
+# source can fail to compile against a newer system libxml2 (signature/
+# constness changes) on machines with no matching prebuilt wheel - exactly
+# what happened with 5.3.0 against libxml2 2.15.3 on Python 3.14/aarch64.
+# The vulnerable/safe API this lab exercises (XMLParser(resolve_entities=,
+# no_network=, load_dtd=) vs defusedxml) has been stable for years, so a
+# newer lxml doesn't put the lesson at risk.
+lxml>=5.3.0
 defusedxml==0.7.1
