@@ -42,18 +42,18 @@ if (data.token) {
 
 ## Burp Suite Quick Reference
 
-| Feature | 用途 |
+| Feature | Use |
 |---|---|
-| Proxy → Intercept | Request/response ကို live ပြင်ခြင်း |
-| Repeater | Request တစ်ခုကို ထပ်ခါထပ်ခါ ပြင်ပြီး ပို့ခြင်း (Ctrl/Cmd+R) |
+| Proxy → Intercept | Modify requests and responses while they are in transit |
+| Repeater | Modify and resend a request (Ctrl/Cmd+R) |
 | Intruder | Parameter fuzzing (IDOR ID sweep, wordlist attack) |
-| Decoder | Base64/URL/Hex encode-decode (JWT payload ဖတ်ဖို့) |
-| Comparer | Response နှစ်ခုကို side-by-side diff |
+| Decoder | Encode/decode Base64, URL, or Hex values |
+| Comparer | Compare two responses side by side |
 
 ```
-Burp certificate install (HTTPS traffic အတွက်):
+Burp certificate installation for HTTPS traffic:
   Proxy → Options → Import/Export CA Certificate
-  Browser ထဲ trusted root အဖြစ် install လုပ်ပါ
+  Install it as a trusted root certificate in your browser
 ```
 
 ## jq Quick Reference (see Tutorial 2.4 for full walkthrough)

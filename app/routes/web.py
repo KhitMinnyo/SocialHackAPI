@@ -29,7 +29,7 @@ Why this design, and why it matters for the course:
   URL bar, e.g. /app/profile/<id> or /app/post/<id>) can still trigger it.
   This is a very common real-world pattern: "security by hidden button."
 
-See Tutorial 2.5 ("SocialHack Web UI နှင့် Burp Suite ချိတ်ဆက်နည်း") for the
+See Tutorial 2.5 ("Connecting the SocialHack Web UI to Burp Suite") for the
 full walkthrough of using this UI as a pivot point into the API labs.
 """
 

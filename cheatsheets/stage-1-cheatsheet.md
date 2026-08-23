@@ -2,27 +2,27 @@
 
 ## HTTP Methods
 
-| Method | ရည်ရွယ်ချက် | Idempotent? | Body ပါလား |
+| Method | Purpose | Idempotent? | Has body? |
 |---|---|---|---|
-| GET | Data ယူခြင်း | ✅ | ❌ |
-| POST | Resource အသစ် ဖန်တီးခြင်း | ❌ | ✅ |
-| PUT | Resource တစ်ခုလုံး update | ✅ | ✅ |
-| PATCH | Resource တစ်စိတ်တစ်ပိုင်း update | ❌ | ✅ |
-| DELETE | Resource ဖျက်ခြင်း | ✅ | ❌ (usually) |
+| GET | Read data | ✅ | ❌ |
+| POST | Create a new resource | ❌ | ✅ |
+| PUT | Replace a resource | ✅ | ✅ |
+| PATCH | Partially update a resource | ❌ | ✅ |
+| DELETE | Delete a resource | ✅ | ❌ (usually) |
 
 ## HTTP Status Codes (Quick Reference)
 
-| Code | အဓိပ္ပါယ် | Security အရ အရေးပါချက် |
+| Code | Meaning | Security relevance |
 |---|---|---|
 | 200 | OK | — |
 | 201 | Created | — |
 | 400 | Bad Request | Verbose error → info disclosure |
-| 401 | Unauthorized | Auth လိုအပ် |
-| 403 | Forbidden | Endpoint ရှိတယ်၊ access မရ |
-| 404 | Not Found | Endpoint မရှိ (403 vs 404 ခြားနားချက် — enumeration) |
-| 405 | Method Not Allowed | Endpoint ရှိတယ်၊ method မှား |
-| 429 | Too Many Requests | Rate limit ရှိကြောင်း |
-| 500 | Internal Server Error | Stack trace/DB error ပေါက်နိုင် |
+| 401 | Unauthorized | Authentication is required |
+| 403 | Forbidden | The endpoint exists, but access is denied |
+| 404 | Not Found | The endpoint/resource is missing; compare with 403 during enumeration |
+| 405 | Method Not Allowed | The endpoint exists, but the method is not supported |
+| 429 | Too Many Requests | A rate limit was reached |
+| 500 | Internal Server Error | Stack trace or database details may leak |
 
 ## Common Request Headers
 
