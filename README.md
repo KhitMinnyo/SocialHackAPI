@@ -34,20 +34,24 @@ brew install jq
 sudo apt install jq
 ```
 
-Bash
+Initial Setup
 
 ```
 # Clone & Install dependencies 
 git clone https://github.com/KhitMinnyo/SocialHackAPI.git
-cd api-hacking
+cd SocialHackAPI
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
 # Start the API (auto-seeds database)
 python3 run.py
-
-# Reset database
+```
+Re-run app
+```
+cd SocialHackAPI 
+source venv/bin/activate
+# Reset database 
 python3 run.py --reset
 ```
 
