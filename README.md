@@ -37,7 +37,8 @@ sudo apt install jq
 Bash
 
 ```
-# Install dependencies
+# Clone & Install dependencies 
+git clone https://github.com/KhitMinnyo/SocialHackAPI.git
 cd api-hacking
 python3 -m venv venv
 source venv/bin/activate
