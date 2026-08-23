@@ -40,8 +40,9 @@ Initial Setup
 # Clone & Install dependencies 
 git clone https://github.com/KhitMinnyo/SocialHackAPI.git
 cd SocialHackAPI
-python3 -m venv venv
+python3 -m venv venv 
 source venv/bin/activate
+pip install flask #for Kali & Debians
 pip install -r requirements.txt
 
 # Start the API (auto-seeds database)
