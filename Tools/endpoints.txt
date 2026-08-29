@@ -1,0 +1,16 @@
+# SocialHackAPI - endpoints for http_method_scanner.py
+# One path per line, relative to --url (default: http://localhost:5001/api/v1).
+# Blank lines and lines starting with # are ignored, so feel free to add
+# notes here or comment an endpoint out instead of deleting it.
+
+/users/1
+/posts
+/posts/1
+/admin/users
+/tools/ping
+/tools/dns-lookup
+/tools/user-lookup
+/graphql
+/webhook/register
+/messages
+/export/profile

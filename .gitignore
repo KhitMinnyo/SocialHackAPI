@@ -1,1 +1,6 @@
 socialhack.db
+
+# macOS
+.DS_Store
+.AppleDouble
+._*
