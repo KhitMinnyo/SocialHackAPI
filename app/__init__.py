@@ -71,6 +71,10 @@ def create_app(config_name="default"):
     from app.routes.xss_lab import xss_lab_bp
     # v2.0 book (Chapter 29): legacy cookie-session endpoints for the CSRF lab
     from app.routes.settings import settings_bp
+    # Web UI additions: forgot-password + lab-only "inbox" pages, calling the
+    # pre-existing (unmodified) /api/v1/auth/reset-password* endpoints - see
+    # app/routes/web_password_reset.py
+    from app.routes.web_password_reset import web_password_reset_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(users_bp, url_prefix="/api/v1/users")
@@ -124,6 +128,13 @@ def create_app(config_name="default"):
     app.register_blueprint(mcp_bp, url_prefix="/api/v1")
     app.register_blueprint(xss_lab_bp, url_prefix="")
     app.register_blueprint(settings_bp, url_prefix="/api/v1")
+    # Forgot-password + lab-only "inbox" pages (/app/forgot-password,
+    # /app/mailbox) plus one new READ-ONLY endpoint (/api/v1/auth/mailbox)
+    # that just re-reads the SAME User.reset_token the existing
+    # POST /api/v1/auth/reset-password already returns - no change to
+    # auth.py, no new secret, no new exposure path, just a friendlier way
+    # to exercise the existing flow from the web UI.
+    app.register_blueprint(web_password_reset_bp, url_prefix="")
 
     # SocialHack Web UI - a realistic, click-through social media frontend.
     # This blueprint has NO vulnerabilities of its own: it only renders page

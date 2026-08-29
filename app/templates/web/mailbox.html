@@ -1,0 +1,47 @@
+{% extends "web/base.html" %}
+{% block title %}Inbox (lab) - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+  <div class="sh-card">
+    <h2>📧 Lab Inbox</h2>
+    <p class="sh-muted">
+      SocialHack never sends real email — this page just shows what the
+      "email" would have contained, so you can finish the reset flow
+      without leaving the browser. In a real product only the account
+      owner could read this; here it's exposed on purpose, as a lab
+      convenience (the same token is already returned directly by
+      <code>POST /api/v1/auth/reset-password</code> — see Chapter 11).
+    </p>
+
+    <form id="sh-mailbox-form">
+      <div class="sh-form-group">
+        <label for="mbEmail">Account email</label>
+        <input class="sh-input" type="email" id="mbEmail" name="email" required autocomplete="email" placeholder="alice@socialhack.local">
+      </div>
+      <button class="sh-btn sh-btn-outline" type="submit" id="sh-mailbox-btn">Check inbox</button>
+    </form>
+  </div>
+
+  <div id="sh-mail-card" class="sh-card sh-hidden"></div>
+
+  <div id="sh-reset-card" class="sh-card sh-hidden">
+    <h3>Set a new password</h3>
+    <div id="sh-reset-error" class="sh-error sh-hidden"></div>
+    <div id="sh-reset-success" class="sh-success sh-hidden"></div>
+    <form id="sh-reset-form">
+      <div class="sh-form-group">
+        <label for="resetToken">Reset code</label>
+        <input class="sh-input" type="text" id="resetToken" name="token" required>
+      </div>
+      <div class="sh-form-group">
+        <label for="newPassword">New password</label>
+        <input class="sh-input" type="password" id="newPassword" name="new_password" required autocomplete="new-password">
+      </div>
+      <button class="sh-btn" type="submit" id="sh-reset-btn">Reset password</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/mailbox.js') }}"></script>
+{% endblock %}
