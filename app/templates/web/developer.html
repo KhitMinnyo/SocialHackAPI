@@ -1,0 +1,43 @@
+{% extends "web/base.html" %}
+{% block title %}Developer - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">Developer</h2>
+    <p class="sh-muted">
+      A click-through UI for the network-tool endpoints in
+      <code>app/routes/misc.py</code> (Command Injection). Same as
+      everywhere else in SocialHack: these pages just call the existing
+      <code>/api/v1/tools/*</code> endpoints with fetch() - nothing here
+      is new backend behavior.
+    </p>
+  </div>
+
+  <div class="sh-card">
+    <h3 style="margin-top:0;"><a href="/app/developer/ping">Ping</a></h3>
+    <p class="sh-muted">
+      Ping a host and see the raw shell command the server builds from
+      your input (<code>POST /api/v1/tools/ping</code>).
+    </p>
+  </div>
+
+  <div class="sh-card">
+    <h3 style="margin-top:0;"><a href="/app/developer/dns-lookup">DNS Lookup</a></h3>
+    <p class="sh-muted">
+      Look up a domain the same way, via <code>nslookup</code>
+      (<code>POST /api/v1/tools/dns-lookup</code>).
+    </p>
+  </div>
+
+  <div class="sh-card">
+    <h3 style="margin-top:0;"><a href="/app/developer/upload">Upload Document</a></h3>
+    <p class="sh-muted">
+      Upload a file with a filename you control, including
+      <code>../</code> path-traversal sequences
+      (<code>POST /api/v1/upload/document</code>).
+    </p>
+  </div>
+
+</div>
+{% endblock %}

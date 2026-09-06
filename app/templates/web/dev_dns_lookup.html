@@ -1,0 +1,34 @@
+{% extends "web/base.html" %}
+{% block title %}DNS Lookup - Developer - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+  <p class="sh-muted"><a href="/app/developer">&larr; Developer</a></p>
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">DNS Lookup</h2>
+    <p class="sh-muted">
+      Calls <code>POST /api/v1/tools/dns-lookup</code> with
+      <code>{"domain": ...}</code>. The domain is passed to
+      <code>nslookup &lt;domain&gt;</code> via a shell (<code>shell=True</code>)
+      with no sanitization, so shell metacharacters let you run arbitrary
+      commands on the server.
+    </p>
+
+    <form id="sh-dns-form">
+      <label class="sh-muted" for="dnsDomain" style="display:block; margin-bottom:4px;">Domain</label>
+      <input class="sh-input" type="text" id="dnsDomain" required style="width:100%; margin-bottom:10px; box-sizing:border-box;">
+      <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+        <button class="sh-btn" type="button" id="sh-fill-safe" style="font-size:0.85em;">Safe example</button>
+        <button class="sh-btn" type="button" id="sh-fill-injection" style="font-size:0.85em;">Command injection example</button>
+      </div>
+      <button class="sh-btn" type="submit">Look up</button>
+    </form>
+
+    <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
+    <div id="sh-dns-result" class="sh-hidden" style="margin-top:14px;"></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dev-dns-lookup.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "web/base.html" %}
+{% block title %}Upload Document - Developer - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+  <p class="sh-muted"><a href="/app/developer">&larr; Developer</a></p>
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">Upload Document</h2>
+    <p class="sh-muted">
+      Calls <code>POST /api/v1/upload/document</code> (multipart form).
+      The filename you send is joined into the server's storage path with
+      no normalization and no extension allow-list, so <code>../</code>
+      in the filename escapes the intended <code>uploads/</code> folder
+      entirely.
+    </p>
+
+    <form id="sh-upload-form">
+      <label class="sh-muted" for="uploadFile" style="display:block; margin-bottom:4px;">File (optional - a small demo file is used if you don't pick one)</label>
+      <input type="file" id="uploadFile" style="margin-bottom:10px; display:block;">
+
+      <label class="sh-muted" for="uploadFilename" style="display:block; margin-bottom:4px;">Filename to send</label>
+      <input class="sh-input" type="text" id="uploadFilename" required style="width:100%; margin-bottom:10px; box-sizing:border-box;">
+
+      <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+        <button class="sh-btn" type="button" id="sh-fill-safe" style="font-size:0.85em;">Safe example</button>
+        <button class="sh-btn" type="button" id="sh-fill-traversal" style="font-size:0.85em;">Path traversal example</button>
+      </div>
+      <button class="sh-btn" type="submit">Upload</button>
+    </form>
+
+    <p class="sh-muted" style="margin-top:10px;">
+      A native file picker never lets you type a path into a filename, so
+      this page sends whatever is in the "Filename to send" box instead
+      of the picked file's real name - exactly like editing the multipart
+      body in Burp Suite would.
+    </p>
+
+    <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
+    <div id="sh-upload-result" class="sh-hidden" style="margin-top:14px;"></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dev-upload.js') }}"></script>
+{% endblock %}

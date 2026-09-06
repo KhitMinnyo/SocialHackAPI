@@ -1,0 +1,35 @@
+{% extends "web/base.html" %}
+{% block title %}Integrations - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">Integrations</h2>
+    <p class="sh-muted">
+      A click-through UI for the "partner API" endpoints in
+      <code>app/routes/integrations.py</code> (OWASP API10:2023 - Unsafe
+      Consumption of APIs). Same as everywhere else in SocialHack: these
+      pages just call the existing <code>/api/v1/integrations/*</code>
+      endpoints with fetch() - nothing here is new backend behavior.
+    </p>
+  </div>
+
+  <div class="sh-card">
+    <h3 style="margin-top:0;"><a href="/app/integrations/exchange-rate">Exchange Rate</a></h3>
+    <p class="sh-muted">
+      Fetch a currency rate from a provider URL you supply, and see the
+      raw response the app blindly trusts (<code>GET /api/v1/integrations/exchange-rate</code>).
+    </p>
+  </div>
+
+  <div class="sh-card">
+    <h3 style="margin-top:0;"><a href="/app/integrations/import-profile">Import Profile from Partner</a></h3>
+    <p class="sh-muted">
+      Import profile fields from a partner URL you supply - including
+      fields a real partner should never be able to set
+      (<code>POST /api/v1/integrations/import-profile</code>).
+    </p>
+  </div>
+
+</div>
+{% endblock %}

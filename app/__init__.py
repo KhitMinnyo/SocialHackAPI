@@ -75,6 +75,13 @@ def create_app(config_name="default"):
     # pre-existing (unmodified) /api/v1/auth/reset-password* endpoints - see
     # app/routes/web_password_reset.py
     from app.routes.web_password_reset import web_password_reset_bp
+    # Web UI additions: click-through pages for the existing (unmodified)
+    # /api/v1/integrations/* endpoints - see app/routes/web_integrations.py
+    from app.routes.web_integrations import web_integrations_bp
+    # Web UI additions: click-through pages for the existing (unmodified)
+    # /api/v1/tools/* endpoints (ping, dns-lookup) - see
+    # app/routes/web_developer.py
+    from app.routes.web_developer import web_developer_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(users_bp, url_prefix="/api/v1/users")
@@ -135,6 +142,14 @@ def create_app(config_name="default"):
     # auth.py, no new secret, no new exposure path, just a friendlier way
     # to exercise the existing flow from the web UI.
     app.register_blueprint(web_password_reset_bp, url_prefix="")
+    # Click-through pages for the existing (unmodified)
+    # /api/v1/integrations/* endpoints (OWASP API10:2023 lab) - no change
+    # to app/routes/integrations.py, just a UI in front of it.
+    app.register_blueprint(web_integrations_bp, url_prefix="/app/integrations")
+    # Click-through pages for the existing (unmodified) /api/v1/tools/*
+    # endpoints (ping, dns-lookup - Command Injection lab) - no change to
+    # app/routes/misc.py, just a UI in front of it.
+    app.register_blueprint(web_developer_bp, url_prefix="/app/developer")
 
     # SocialHack Web UI - a realistic, click-through social media frontend.
     # This blueprint has NO vulnerabilities of its own: it only renders page

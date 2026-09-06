@@ -1,0 +1,35 @@
+{% extends "web/base.html" %}
+{% block title %}Import Profile - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+  <p class="sh-muted"><a href="/app/integrations">&larr; Integrations</a></p>
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">Import Profile from Partner</h2>
+    <p class="sh-muted">
+      Calls <code>POST /api/v1/integrations/import-profile</code> with
+      <code>{"source_url": ...}</code>. Whatever JSON object comes back is
+      applied field-by-field onto <b>your own currently logged-in
+      account</b> - including fields like <code>role</code> and
+      <code>is_verified</code> that a real partner should never be able to
+      set.
+    </p>
+
+    <form id="sh-import-form">
+      <label class="sh-muted" for="sourceUrl" style="display:block; margin-bottom:4px;">Partner (source) URL</label>
+      <input class="sh-input" type="text" id="sourceUrl" required style="width:100%; margin-bottom:10px; box-sizing:border-box;">
+      <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+        <button class="sh-btn" type="button" id="sh-fill-benign" style="font-size:0.85em;">Use benign example</button>
+        <button class="sh-btn" type="button" id="sh-fill-evil" style="font-size:0.85em;">Use privilege-escalation example</button>
+      </div>
+      <button class="sh-btn" type="submit">Import</button>
+    </form>
+
+    <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
+    <div id="sh-import-result" class="sh-hidden" style="margin-top:14px;"></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/import-profile.js') }}"></script>
+{% endblock %}
