@@ -1,0 +1,47 @@
+{% extends "web/base.html" %}
+{% block title %}XML Import - Integrations - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+  <p class="sh-muted"><a href="/app/integrations">&larr; Integrations</a></p>
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">XML Import (Legacy Partner)</h2>
+    <p class="sh-muted">
+      Calls <code>POST /api/v1/integrations/xml-import</code> with a raw
+      <code>Content-Type: application/xml</code> body - a legacy partner
+      integration that still speaks XML instead of JSON. The server parses
+      it with external entities enabled, so a <code>&lt;!DOCTYPE&gt;</code>
+      that declares an external entity gets resolved before the
+      <code>&lt;username&gt;</code>/<code>&lt;bio&gt;</code> fields are read
+      back out - including entities that point at a file on the server's
+      own disk.
+    </p>
+
+    <form id="sh-xml-form">
+      <label class="sh-muted" for="xmlBody" style="display:block; margin-bottom:4px;">Raw XML body</label>
+      <textarea class="sh-input" id="xmlBody" required rows="7" spellcheck="false"
+        style="width:100%; margin-bottom:10px; box-sizing:border-box; font-family:monospace; font-size:0.9em; resize:vertical;"></textarea>
+
+      <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+        <button class="sh-btn" type="button" id="sh-fill-safe" style="font-size:0.85em;">Safe example</button>
+        <button class="sh-btn" type="button" id="sh-fill-xxe" style="font-size:0.85em;">XXE example</button>
+      </div>
+      <button class="sh-btn" type="submit">Send</button>
+    </form>
+
+    <p class="sh-muted" style="margin-top:10px;">
+      The safe example is an ordinary profile update. The XXE example adds
+      a <code>&lt;!DOCTYPE&gt;</code> that defines an entity reading
+      <code>file:///etc/passwd</code> and uses that entity as the
+      <code>&lt;username&gt;</code> value - the same thing a proxy like
+      Burp Suite would let you do by hand-editing the request body.
+    </p>
+
+    <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
+    <div id="sh-xml-result" class="sh-hidden" style="margin-top:14px;"></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/xml-import.js') }}"></script>
+{% endblock %}

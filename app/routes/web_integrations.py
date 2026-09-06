@@ -1,10 +1,10 @@
 """Web UI pages for the /api/v1/integrations/* "partner API" endpoints
-(exchange-rate, import-profile).
+(exchange-rate, import-profile, xml-import).
 
 Same house rule as app/routes/web.py and app/routes/web_password_reset.py:
 this file has NO logic of its own. It only renders page shells - the
-page's own JavaScript (app/static/js/exchange-rate.js and
-import-profile.js) calls the existing, unmodified endpoints in
+page's own JavaScript (app/static/js/exchange-rate.js, import-profile.js,
+xml-import.js) calls the existing, unmodified endpoints in
 app/routes/integrations.py via fetch(), exactly like every other page in
 this UI. Nothing here is new backend behavior.
 """
@@ -27,3 +27,8 @@ def exchange_rate_page():
 @web_integrations_bp.route("/import-profile", methods=["GET"])
 def import_profile_page():
     return render_template("web/import_profile.html")
+
+
+@web_integrations_bp.route("/xml-import", methods=["GET"])
+def xml_import_page():
+    return render_template("web/xml_import.html")

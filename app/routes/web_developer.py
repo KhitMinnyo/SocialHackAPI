@@ -1,12 +1,17 @@
 """Web UI pages for a few low-level lab endpoints, grouped under a
 "Developer" menu: the /api/v1/tools/* network tools (ping, dns-lookup)
-from app/routes/misc.py, and the /api/v1/upload/document file upload from
-app/routes/upload.py.
+from app/routes/misc.py, and the /api/v1/upload/document (+ the paired
+/api/v1/upload/view) file upload endpoints from app/routes/upload.py.
 
-Same house rule as the rest of app/routes/web_*.py: no logic of its own -
-the page's own JavaScript (app/static/js/dev-ping.js, dev-dns-lookup.js,
-dev-upload.js) calls the existing, unmodified endpoints via fetch().
-Nothing here is new backend behavior.
+Same house rule as the rest of app/routes/web_*.py: this file has no
+logic of its own - the page's own JavaScript (app/static/js/dev-ping.js,
+dev-dns-lookup.js, dev-upload.js) calls those endpoints via fetch(). The
+one addition to the underlying API for this whole feature set is
+GET /api/v1/upload/view in upload.py: a new route (not a change to any
+existing route) added specifically so the upload page could read a file
+back - it deliberately carries the same path-traversal bug as
+upload_document() so the write-then-read Chapter 24 demo works
+end-to-end through the browser.
 """
 from flask import Blueprint, render_template
 

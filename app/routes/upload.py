@@ -2,7 +2,7 @@
 
 import os
 import requests as http_requests
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, send_file
 from app import db
 from app.models import User
 from app.utils import token_required
@@ -172,3 +172,39 @@ def upload_document():
         "path": f"/uploads/{filename}",
         "size": os.path.getsize(filepath),
     }), 201
+
+
+@upload_bp.route("/upload/view", methods=["GET"])
+@token_required
+def view_document():
+    """View/open a previously uploaded document by path.
+
+    VULNERABILITY: Path Traversal (Arbitrary File Read) - the read-side
+    twin of upload_document() above. The caller-supplied `path` query
+    param is joined directly into the storage path with no normalization
+    and no check that the result stays inside the uploads directory, so
+    '../' escapes it exactly like the filename does on upload. Anything
+    upload_document() can write outside uploads/, this can read back -
+    and it is not limited to files this app itself wrote.
+
+    Payload example:
+        GET /api/v1/upload/view?path=../INJECTED.txt
+    """
+    path = request.args.get("path")
+    if not path:
+        return jsonify({"error": "path query param required, e.g. ?path=hello.txt"}), 400
+
+    upload_dir = current_app.config.get("UPLOAD_FOLDER", "uploads")
+
+    # VULNERABILITY: client-controlled path used verbatim - '../' walks
+    # outside the uploads folder because os.path.join() does not
+    # normalize '..', exactly like upload_document() above.
+    filepath = os.path.join(upload_dir, path)
+
+    if not os.path.isfile(filepath):
+        return jsonify({"error": f"No file at that path: {path}"}), 404
+
+    try:
+        return send_file(filepath)
+    except Exception as e:
+        return jsonify({"error": f"Read failed: {str(e)}"}), 500
