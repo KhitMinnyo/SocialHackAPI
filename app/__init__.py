@@ -82,6 +82,12 @@ def create_app(config_name="default"):
     # /api/v1/tools/* endpoints (ping, dns-lookup) - see
     # app/routes/web_developer.py
     from app.routes.web_developer import web_developer_bp
+    # Web UI addition: click-through page for the existing (unmodified)
+    # /api/v1/users/search endpoint (SQL Injection lab) - see
+    # app/routes/web_search.py. Unlike every other web_* page, this one's
+    # own JavaScript filters the query before sending it, so the UI itself
+    # cannot trigger the injection - see that file's docstring for why.
+    from app.routes.web_search import web_search_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(users_bp, url_prefix="/api/v1/users")
@@ -150,6 +156,12 @@ def create_app(config_name="default"):
     # endpoints (ping, dns-lookup - Command Injection lab) - no change to
     # app/routes/misc.py, just a UI in front of it.
     app.register_blueprint(web_developer_bp, url_prefix="/app/developer")
+    # Click-through page for the existing (unmodified) /api/v1/users/search
+    # endpoint (SQL Injection lab) - no change to app/routes/users.py. This
+    # page's own JS sanitizes input before sending, so the UI cannot
+    # trigger the injection - the API remains fully vulnerable when called
+    # directly (curl/Postman/Burp). See app/routes/web_search.py.
+    app.register_blueprint(web_search_bp, url_prefix="")
 
     # SocialHack Web UI - a realistic, click-through social media frontend.
     # This blueprint has NO vulnerabilities of its own: it only renders page

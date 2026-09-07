@@ -1,0 +1,47 @@
+{% extends "web/base.html" %}
+{% block title %}Search - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">Search</h2>
+    <p class="sh-muted">
+      Calls <code>GET /api/v1/users/search?q=...</code> to search usernames
+      and bios. One deliberate difference from every other page in this
+      app: before the request ever leaves your browser, this page's own
+      JavaScript (<code>search.js</code>) strips characters commonly used
+      to break out of a SQL string (<code>'</code>, <code>--</code>,
+      <code>/* */</code>, <code>;</code>). Try the "SQL injection attempt"
+      example below - it will not cause an error here.
+    </p>
+
+    <form id="sh-search-form">
+      <label class="sh-muted" for="searchQuery" style="display:block; margin-bottom:4px;">Search query</label>
+      <input class="sh-input" id="searchQuery" type="text" required
+        style="width:100%; margin-bottom:10px; box-sizing:border-box;">
+
+      <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+        <button class="sh-btn" type="button" id="sh-fill-normal" style="font-size:0.85em;">Normal search example</button>
+        <button class="sh-btn" type="button" id="sh-fill-injection" style="font-size:0.85em;">SQL injection attempt example</button>
+      </div>
+      <button class="sh-btn" type="submit">Search</button>
+    </form>
+
+    <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
+    <div id="sh-search-result" class="sh-hidden" style="margin-top:14px;"></div>
+
+    <p class="sh-muted" style="margin-top:16px;">
+      This filter only protects <em>this page</em>. It runs entirely in
+      your browser, so it never reaches
+      <code>/api/v1/users/search</code> itself - anyone who calls that
+      endpoint directly (curl, Postman, or replaying/editing the request
+      in Burp Suite) skips this page's JavaScript completely and can still
+      inject. A safe-looking web app does not mean the API behind it is
+      safe. See Chapter 20 (SQL Injection).
+    </p>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}
