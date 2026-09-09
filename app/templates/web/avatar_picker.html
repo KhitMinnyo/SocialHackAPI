@@ -1,0 +1,37 @@
+{% extends "web/base.html" %}
+{% block title %}Avatar - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">Choose an avatar</h2>
+    <p class="sh-muted">
+      Pick one of the 5 built-in avatars below. Selecting one calls
+      <code>POST /api/v1/upload/avatar</code> with
+      <code>{"url": ...}</code> - the same endpoint any "set avatar from a
+      URL" feature would use. This page does not print that URL anywhere
+      on screen or in the page's HTML: each thumbnail is loaded with
+      JavaScript and drawn from the image bytes directly, so the address
+      it came from only shows up in your browser's DevTools &rarr;
+      Network tab - the same place it would show up for any other image
+      request.
+    </p>
+
+    <div id="sh-avatar-grid" style="display:flex; gap:14px; flex-wrap:wrap; margin-top:12px;"></div>
+
+    <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
+    <div id="sh-avatar-result" class="sh-hidden" style="margin-top:14px;"></div>
+
+    <p class="sh-muted" style="margin-top:16px;">
+      Behind this picker, <code>/api/v1/upload/avatar</code> fetches
+      whatever URL it is given, server-side, with no validation - see
+      Chapter 16 (SSRF). This page only ever sends it one of the 5 preset
+      URLs above; nothing here restricts what the endpoint itself will
+      accept when called directly.
+    </p>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/avatar-picker.js') }}"></script>
+{% endblock %}

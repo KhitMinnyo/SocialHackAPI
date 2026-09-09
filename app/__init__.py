@@ -88,6 +88,17 @@ def create_app(config_name="default"):
     # own JavaScript filters the query before sending it, so the UI itself
     # cannot trigger the injection - see that file's docstring for why.
     from app.routes.web_search import web_search_bp
+    # Web UI addition: click-through page for the existing (unmodified)
+    # /api/v1/upload/avatar endpoint (SSRF lab) - see
+    # app/routes/web_avatar.py. The page offers 5 built-in preset avatars
+    # and never prints their URLs as visible text - see that file's
+    # docstring for how/why.
+    from app.routes.web_avatar import web_avatar_bp
+    # Web UI addition: click-through page for the existing (unmodified)
+    # /api/v1/promotions/verification/* endpoints (Business Flows lab) -
+    # see app/routes/web_promotions.py. Plain wrapper, no client-side
+    # twist - the vulnerability is entirely on the API side already.
+    from app.routes.web_promotions import web_promotions_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(users_bp, url_prefix="/api/v1/users")
@@ -162,6 +173,14 @@ def create_app(config_name="default"):
     # trigger the injection - the API remains fully vulnerable when called
     # directly (curl/Postman/Burp). See app/routes/web_search.py.
     app.register_blueprint(web_search_bp, url_prefix="")
+    # Click-through page for the existing (unmodified) /api/v1/upload/avatar
+    # endpoint (SSRF lab) - no change to app/routes/upload.py. See
+    # app/routes/web_avatar.py.
+    app.register_blueprint(web_avatar_bp, url_prefix="")
+    # Click-through page for the existing (unmodified)
+    # /api/v1/promotions/verification/* endpoints (Business Flows lab) -
+    # no change to app/routes/promotions.py. See app/routes/web_promotions.py.
+    app.register_blueprint(web_promotions_bp, url_prefix="")
 
     # SocialHack Web UI - a realistic, click-through social media frontend.
     # This blueprint has NO vulnerabilities of its own: it only renders page

@@ -145,7 +145,17 @@ def main():
     # because debug=True below).
     maybe_start_grpc_lab(reloader_active=True)
 
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    # threaded=True: a few endpoints (upload_avatar, exchange-rate,
+    # import-profile) make a server-side HTTP request as part of handling
+    # a request - that outbound call IS the vulnerability (SSRF / Unsafe
+    # Consumption). When that URL happens to point back at this same
+    # server - as the web UI's own built-in examples do, so those pages
+    # work with zero setup - a single-threaded dev server can't accept
+    # that second, self-referencing connection while the first request is
+    # still being handled, and just hangs until the request's own 5s
+    # timeout fires. threaded=True lets the dev server handle both at
+    # once, the same way any real deployment already would.
+    app.run(host="0.0.0.0", port=5001, debug=True, threaded=True)
 
 
 if __name__ == "__main__":
