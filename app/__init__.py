@@ -99,6 +99,12 @@ def create_app(config_name="default"):
     # see app/routes/web_promotions.py. Plain wrapper, no client-side
     # twist - the vulnerability is entirely on the API side already.
     from app.routes.web_promotions import web_promotions_bp
+    # Web UI addition: click-through page for the existing (unmodified)
+    # /api/v1/otp/* endpoints (rate-limit bypass lab) - see
+    # app/routes/web_otp.py. Another plain wrapper like web_promotions.py -
+    # it never exposes request-header control, so it has no way to touch
+    # the X-Forwarded-For bypass either way.
+    from app.routes.web_otp import web_otp_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(users_bp, url_prefix="/api/v1/users")
@@ -181,6 +187,10 @@ def create_app(config_name="default"):
     # /api/v1/promotions/verification/* endpoints (Business Flows lab) -
     # no change to app/routes/promotions.py. See app/routes/web_promotions.py.
     app.register_blueprint(web_promotions_bp, url_prefix="")
+    # Click-through page for the existing (unmodified) /api/v1/otp/*
+    # endpoints (rate-limit bypass lab) - no change to app/routes/otp.py
+    # or app/rate_limiter.py. See app/routes/web_otp.py.
+    app.register_blueprint(web_otp_bp, url_prefix="")
 
     # SocialHack Web UI - a realistic, click-through social media frontend.
     # This blueprint has NO vulnerabilities of its own: it only renders page

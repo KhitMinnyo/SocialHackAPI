@@ -1,0 +1,49 @@
+{% extends "web/base.html" %}
+{% block title %}OTP - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">One-time code (OTP)</h2>
+    <p class="sh-muted">
+      Calls <code>POST /api/v1/otp/request</code> and
+      <code>POST /api/v1/otp/verify</code>. This lab is self-contained -
+      no real SMS is sent, so the endpoint hands the code straight back in
+      its own response instead.
+    </p>
+
+    <form id="sh-otp-request-form">
+      <label class="sh-muted" for="otpPhone" style="display:block; margin-bottom:4px;">Phone number</label>
+      <input class="sh-input" id="otpPhone" type="text" value="+959123456789" required
+        style="width:100%; margin-bottom:10px; box-sizing:border-box;">
+      <button class="sh-btn" type="submit">Request code</button>
+    </form>
+
+    <div id="sh-request-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
+    <div id="sh-request-result" class="sh-hidden" style="margin-top:14px;"></div>
+
+    <form id="sh-otp-verify-form" style="margin-top:20px; padding-top:16px; border-top:1px solid var(--sh-border);">
+      <label class="sh-muted" for="otpCode" style="display:block; margin-bottom:4px;">Code</label>
+      <input class="sh-input" id="otpCode" type="text" required
+        style="width:100%; margin-bottom:10px; box-sizing:border-box;">
+      <button class="sh-btn" type="submit">Verify</button>
+    </form>
+
+    <div id="sh-verify-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
+    <div id="sh-verify-result" class="sh-hidden" style="margin-top:14px;"></div>
+
+    <p class="sh-muted" style="margin-top:16px;">
+      <code>/api/v1/otp/request</code> really does limit you to 3 requests
+      per 60 seconds - try clicking "Request code" four times quickly to
+      see the 429. This page has no way around that (it never sets custom
+      request headers), but the limiter itself keys on a client-supplied
+      <code>X-Forwarded-For</code> header - calling the endpoint directly
+      and rotating that header on every request resets the limit each
+      time. See Chapter 13 (Rate Limiting).
+    </p>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/otp.js') }}"></script>
+{% endblock %}
