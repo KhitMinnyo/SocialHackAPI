@@ -82,11 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
         (lastPreviewUrl
           ? '<img src="' + lastPreviewUrl + '" width="64" height="64" style="border-radius:50%; object-fit:cover;">'
           : "") +
-        '<div>' +
-        '<div style="font-weight:700;">' + SH.escapeHtml(data.message || "Avatar updated!") + '</div>' +
-        '<div class="sh-muted" style="margin-top:4px;">Content-Type: ' + SH.escapeHtml(data.content_type) +
-        ' &middot; ' + data.size + ' bytes</div>' +
-        '</div></div>';
+        '<div style="font-weight:700;">Avatar updated!</div>' +
+        '</div>';
       resultEl.classList.remove("sh-hidden");
     } catch (err) {
       SH.showError(errorEl, err);

@@ -27,10 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
       requestResultEl.innerHTML =
         '<div class="sh-post">' +
         '<div style="font-weight:700;">' + SH.escapeHtml(data.message) + '</div>' +
-        '<div class="sh-muted" style="margin-top:4px;">Code: <code>' + SH.escapeHtml(data.otp_code) + '</code> ' +
-        '(auto-filled below - a real SMS provider would send this to the phone instead)</div>' +
         '<div class="sh-muted" style="margin-top:4px;">' + data.requests_remaining_in_window +
-        ' request(s) remaining in this ' + data.window_seconds + 's window</div>' +
+        ' request(s) remaining</div>' +
         '</div>';
       requestResultEl.classList.remove("sh-hidden");
     } catch (err) {

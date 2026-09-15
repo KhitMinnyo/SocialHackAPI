@@ -5,27 +5,13 @@
 
   <div class="sh-card">
     <h2 style="margin-top:0;">Get verified</h2>
-    <p class="sh-muted">
-      Calls <code>GET /api/v1/promotions/verification/eligibility</code>
-      and <code>POST /api/v1/promotions/verification/apply</code> - a
-      verified-badge flow that is fully automated on the server, with no
-      human review on the other end.
-    </p>
 
     <div id="sh-status">
-      <p class="sh-muted">Checking eligibility...</p>
+      <p class="sh-muted">Loading...</p>
     </div>
 
     <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
     <div id="sh-apply-result" class="sh-hidden" style="margin-top:14px;"></div>
-
-    <p class="sh-muted" style="margin-top:16px;">
-      Nothing on this page is doing any special checking of its own - it
-      just shows you what <code>/promotions/verification/eligibility</code>
-      returns and calls <code>/promotions/verification/apply</code> when
-      you click the button. See Chapter 15 (Business Flows) for why an
-      automated, unlimited version of this flow is a real problem.
-    </p>
   </div>
 </div>
 {% endblock %}

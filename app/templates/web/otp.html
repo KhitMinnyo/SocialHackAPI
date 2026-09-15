@@ -5,12 +5,6 @@
 
   <div class="sh-card">
     <h2 style="margin-top:0;">One-time code (OTP)</h2>
-    <p class="sh-muted">
-      Calls <code>POST /api/v1/otp/request</code> and
-      <code>POST /api/v1/otp/verify</code>. This lab is self-contained -
-      no real SMS is sent, so the endpoint hands the code straight back in
-      its own response instead.
-    </p>
 
     <form id="sh-otp-request-form">
       <label class="sh-muted" for="otpPhone" style="display:block; margin-bottom:4px;">Phone number</label>
@@ -31,16 +25,6 @@
 
     <div id="sh-verify-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
     <div id="sh-verify-result" class="sh-hidden" style="margin-top:14px;"></div>
-
-    <p class="sh-muted" style="margin-top:16px;">
-      <code>/api/v1/otp/request</code> really does limit you to 3 requests
-      per 60 seconds - try clicking "Request code" four times quickly to
-      see the 429. This page has no way around that (it never sets custom
-      request headers), but the limiter itself keys on a client-supplied
-      <code>X-Forwarded-For</code> header - calling the endpoint directly
-      and rotating that header on every request resets the limit each
-      time. See Chapter 13 (Rate Limiting).
-    </p>
   </div>
 </div>
 {% endblock %}
