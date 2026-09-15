@@ -57,69 +57,69 @@ document.addEventListener("DOMContentLoaded", () => {
     loadConversation();
   }
 
-  // ---- Inbox / Sent view ----
+  // ---- Inbox view: one row per conversation, Messenger-style ----
   function initInbox() {
     const listEl = document.getElementById("sh-message-list");
-    const tabs = document.querySelectorAll(".sh-tab");
-    const newMessageForm = document.getElementById("sh-new-message-form");
-    let currentTab = "inbox";
 
-    function renderRow(m, direction) {
-      const otherUsername = direction === "inbox" ? m.sender : m.recipient;
-      const otherUserId = direction === "inbox" ? m.sender_id : m.recipient_id;
+    function renderRow(c) {
       const row = document.createElement("a");
-      row.href = `/app/messages/conversation/${otherUserId}`;
-      row.className = "sh-msg-row" + (direction === "inbox" && !m.is_read ? " unread" : "");
+      row.href = `/app/messages/conversation/${c.otherId}`;
+      row.className = "sh-msg-row" + (c.hasUnread ? " unread" : "");
       row.style.display = "flex";
       row.innerHTML = `
-        <span>${direction === "inbox" ? "From" : "To"}: <strong>${SH.escapeHtml(otherUsername || "unknown")}</strong> - ${SH.escapeHtml(m.content).slice(0, 60)}</span>
-        <span class="sh-muted">${SH.formatDate(m.created_at)}</span>
+        <span><strong>${SH.escapeHtml(c.otherUsername || "unknown")}</strong> - ${SH.escapeHtml(c.lastContent).slice(0, 60)}</span>
+        <span class="sh-muted">${SH.formatDate(c.lastCreatedAt)}</span>
       `;
       return row;
     }
 
-    async function loadTab(tab) {
-      currentTab = tab;
+    // Folds /messages/inbox and /messages/sent into a single list of
+    // conversations, one row per other user, keeping only the most
+    // recent message with each person - like a real messenger inbox,
+    // not a raw per-message log split into two tabs.
+    function touch(byUser, otherId, otherUsername, message, unread) {
+      const existing = byUser.get(otherId);
+      const isNewer = !existing || new Date(message.created_at) > new Date(existing.lastCreatedAt);
+      byUser.set(otherId, {
+        otherId,
+        otherUsername: isNewer ? otherUsername : existing.otherUsername,
+        lastContent: isNewer ? message.content : existing.lastContent,
+        lastCreatedAt: isNewer ? message.created_at : existing.lastCreatedAt,
+        hasUnread: (existing && existing.hasUnread) || unread,
+      });
+    }
+
+    async function loadConversations() {
       listEl.innerHTML = '<p class="sh-muted">Loading...</p>';
       try {
-        const data = await SH.apiFetch(tab === "inbox" ? "/messages/inbox" : "/messages/sent");
+        const [inboxData, sentData] = await Promise.all([
+          SH.apiFetch("/messages/inbox"),
+          SH.apiFetch("/messages/sent"),
+        ]);
+
+        const byUser = new Map();
+        (inboxData.messages || []).forEach((m) => {
+          touch(byUser, m.sender_id, m.sender, m, !m.is_read);
+        });
+        (sentData.messages || []).forEach((m) => {
+          touch(byUser, m.recipient_id, m.recipient, m, false);
+        });
+
+        const conversations = Array.from(byUser.values()).sort(
+          (a, b) => new Date(b.lastCreatedAt) - new Date(a.lastCreatedAt)
+        );
+
         listEl.innerHTML = "";
-        const messages = data.messages || [];
-        if (messages.length === 0) {
-          listEl.innerHTML = '<p class="sh-muted">Nothing here yet.</p>';
+        if (conversations.length === 0) {
+          listEl.innerHTML = '<p class="sh-muted">No conversations yet.</p>';
           return;
         }
-        messages.forEach((m) => listEl.appendChild(renderRow(m, tab)));
+        conversations.forEach((c) => listEl.appendChild(renderRow(c)));
       } catch (err) {
         SH.showError(errorEl, err);
       }
     }
 
-    tabs.forEach((tab) => {
-      tab.addEventListener("click", () => {
-        tabs.forEach((t) => t.classList.remove("active"));
-        tab.classList.add("active");
-        loadTab(tab.getAttribute("data-tab"));
-      });
-    });
-
-    newMessageForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const recipientId = parseInt(document.getElementById("sh-recipient-id").value, 10);
-      const content = document.getElementById("sh-new-message-content").value.trim();
-      if (!recipientId || !content) return;
-      try {
-        await SH.apiFetch("/messages", {
-          method: "POST",
-          body: JSON.stringify({ recipient_id: recipientId, content }),
-        });
-        document.getElementById("sh-new-message-content").value = "";
-        loadTab(currentTab);
-      } catch (err) {
-        SH.showError(errorEl, err);
-      }
-    });
-
-    loadTab("inbox");
+    loadConversations();
   }
 });

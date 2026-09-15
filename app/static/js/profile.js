@@ -51,6 +51,13 @@ document.addEventListener("DOMContentLoaded", () => {
         editCard.classList.remove("sh-hidden");
       });
       actionEl.appendChild(editBtn);
+
+      const exportLink = document.createElement("a");
+      exportLink.className = "sh-btn sh-btn-outline sh-btn-small";
+      exportLink.textContent = "Export my data";
+      exportLink.href = "/app/export";
+      exportLink.style.marginLeft = "8px";
+      actionEl.appendChild(exportLink);
     } else {
       const followBtn = document.createElement("button");
       followBtn.className = "sh-btn sh-btn-small";
@@ -68,6 +75,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
       actionEl.appendChild(followBtn);
+
+      const messageLink = document.createElement("a");
+      messageLink.className = "sh-btn sh-btn-outline sh-btn-small";
+      messageLink.textContent = "Message";
+      messageLink.href = `/app/messages/conversation/${userId}`;
+      messageLink.style.marginLeft = "8px";
+      actionEl.appendChild(messageLink);
     }
   }
 

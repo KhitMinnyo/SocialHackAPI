@@ -1,0 +1,18 @@
+{% extends "web/base.html" %}
+{% block title %}Export Data - SocialHack{% endblock %}
+{% block content %}
+<div class="sh-container">
+
+  <div class="sh-card">
+    <h2 style="margin-top:0;">Download your information</h2>
+
+    <button class="sh-btn" id="sh-export-btn">Request download</button>
+
+    <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
+    <div id="sh-export-result" class="sh-hidden" style="margin-top:14px;"></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/export-profile.js') }}"></script>
+{% endblock %}

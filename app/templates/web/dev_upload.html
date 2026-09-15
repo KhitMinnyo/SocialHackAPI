@@ -6,63 +6,19 @@
 
   <div class="sh-card">
     <h2 style="margin-top:0;">Upload Document</h2>
-    <p class="sh-muted">
-      Calls <code>POST /api/v1/upload/document</code> (multipart form).
-      The filename you send is joined into the server's storage path with
-      no normalization and no extension allow-list, so <code>../</code>
-      in the filename escapes the intended <code>uploads/</code> folder
-      entirely, and any extension - including <code>.py</code> or
-      <code>.svg</code> - is accepted and stored exactly as sent. This
-      page mirrors Chapter 24 (File Upload Attacks &amp; Path Traversal).
-    </p>
 
     <form id="sh-upload-form">
-      <label class="sh-muted" for="uploadFile" style="display:block; margin-bottom:4px;">File (optional - a small demo file is used if you don't pick one)</label>
+      <label class="sh-muted" for="uploadFile" style="display:block; margin-bottom:4px;">File</label>
       <input type="file" id="uploadFile" style="margin-bottom:10px; display:block;">
 
-      <label class="sh-muted" for="uploadFilename" style="display:block; margin-bottom:4px;">Filename to send / path to view</label>
+      <label class="sh-muted" for="uploadFilename" style="display:block; margin-bottom:4px;">Filename</label>
       <input class="sh-input" type="text" id="uploadFilename" required style="width:100%; margin-bottom:10px; box-sizing:border-box;">
 
-      <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
-        <button class="sh-btn" type="button" id="sh-fill-safe" style="font-size:0.85em;">Safe example</button>
-        <button class="sh-btn" type="button" id="sh-fill-traversal" style="font-size:0.85em;">Path traversal example</button>
-        <button class="sh-btn" type="button" id="sh-fill-unrestricted" style="font-size:0.85em;">Unrestricted type (.py) example</button>
-        <button class="sh-btn" type="button" id="sh-fill-svg" style="font-size:0.85em;">SVG (XSS/XXE carrier) example</button>
-      </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="sh-btn" type="submit">Upload</button>
         <button class="sh-btn" type="button" id="sh-view-btn">View / Open file</button>
       </div>
     </form>
-
-    <p class="sh-muted" style="margin-top:10px;">
-      A native file picker never lets you type a path into a filename, so
-      this page sends whatever is in the box above instead of the picked
-      file's real name - exactly like editing the multipart body in Burp
-      Suite would.
-    </p>
-
-    <p class="sh-muted">
-      "View / Open file" calls a second endpoint,
-      <code>GET /api/v1/upload/view?path=...</code>, using the same box -
-      it has the identical unsanitized-path bug on the read side, so it
-      can open a file that escaped <code>uploads/</code> just as easily
-      as one that never left it. If the SVG example above renders as an
-      image and its script runs when opened, that's the Chapter 24
-      SVG&rarr;stored-XSS chain happening for real; whether it does
-      depends on how this server maps <code>.svg</code> to a content
-      type, so treat it as something to observe rather than something
-      guaranteed.
-    </p>
-
-    <p class="sh-muted">
-      The traversal, unrestricted-type, and SVG examples really write to
-      disk. <code>python run.py --reset</code> only resets the database,
-      not these files - delete them by hand afterward if you want a
-      clean tree (e.g. <code>INJECTED.txt</code> in the project root, and
-      <code>shell.py</code> / <code>evil.svg</code> under
-      <code>uploads/</code>).
-    </p>
 
     <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
     <div id="sh-upload-result" class="sh-hidden" style="margin-top:14px;"></div>

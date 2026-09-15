@@ -8,13 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   domainInput.value = "google.com";
 
-  document.getElementById("sh-fill-safe").addEventListener("click", () => {
-    domainInput.value = "google.com";
-  });
-  document.getElementById("sh-fill-injection").addEventListener("click", () => {
-    domainInput.value = "google.com; whoami";
-  });
-
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     errorEl.classList.add("sh-hidden");

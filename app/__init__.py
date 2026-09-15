@@ -95,6 +95,12 @@ def create_app(config_name="default"):
     # docstring for how/why.
     from app.routes.web_avatar import web_avatar_bp
     # Web UI addition: click-through page for the existing (unmodified)
+    # GET /api/v1/export/profile endpoint (Excessive Data Exposure / BOPLA
+    # lab) - see app/routes/web_export.py. Plain wrapper, no client-side
+    # twist - the over-exposure (to_full_dict()) is entirely on the API
+    # side already. Linked from a user's own profile page.
+    from app.routes.web_export import web_export_bp
+    # Web UI addition: click-through page for the existing (unmodified)
     # /api/v1/promotions/verification/* endpoints (Business Flows lab) -
     # see app/routes/web_promotions.py. Plain wrapper, no client-side
     # twist - the vulnerability is entirely on the API side already.
@@ -183,6 +189,10 @@ def create_app(config_name="default"):
     # endpoint (SSRF lab) - no change to app/routes/upload.py. See
     # app/routes/web_avatar.py.
     app.register_blueprint(web_avatar_bp, url_prefix="")
+    # Click-through page for the existing (unmodified) GET
+    # /api/v1/export/profile endpoint (Excessive Data Exposure / BOPLA lab) -
+    # no change to app/routes/upload.py. See app/routes/web_export.py.
+    app.register_blueprint(web_export_bp, url_prefix="")
     # Click-through page for the existing (unmodified)
     # /api/v1/promotions/verification/* endpoints (Business Flows lab) -
     # no change to app/routes/promotions.py. See app/routes/web_promotions.py.

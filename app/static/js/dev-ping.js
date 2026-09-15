@@ -8,13 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   hostInput.value = "localhost";
 
-  document.getElementById("sh-fill-safe").addEventListener("click", () => {
-    hostInput.value = "localhost";
-  });
-  document.getElementById("sh-fill-injection").addEventListener("click", () => {
-    hostInput.value = "localhost; whoami";
-  });
-
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     errorEl.classList.add("sh-hidden");

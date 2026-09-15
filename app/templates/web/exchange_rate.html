@@ -6,24 +6,12 @@
 
   <div class="sh-card">
     <h2 style="margin-top:0;">Exchange Rate</h2>
-    <p class="sh-muted">
-      Calls <code>GET /api/v1/integrations/exchange-rate?provider=&lt;url&gt;</code>.
-      The app fetches whatever URL you give it and trusts the JSON
-      <code>rate</code> field it gets back, with no domain allow-list and
-      no sanity check on the value.
-    </p>
 
     <form id="sh-rate-form">
       <label class="sh-muted" for="rateProvider" style="display:block; margin-bottom:4px;">Provider URL</label>
       <input class="sh-input" type="text" id="rateProvider" required style="width:100%; margin-bottom:10px; box-sizing:border-box;">
       <button class="sh-btn" type="submit">Fetch rate</button>
     </form>
-
-    <p class="sh-muted" style="margin-top:10px;">
-      Prefilled with a local static JSON file so this works with no setup.
-      Point it at your own JSON URL (e.g. one returning <code>{"rate": 999999}</code>)
-      to see the missing validation for yourself.
-    </p>
 
     <div id="sh-error" class="sh-error sh-hidden" style="margin-top:10px;"></div>
     <div id="sh-rate-result" class="sh-hidden" style="margin-top:14px;"></div>

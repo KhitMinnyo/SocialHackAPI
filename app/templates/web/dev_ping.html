@@ -6,21 +6,10 @@
 
   <div class="sh-card">
     <h2 style="margin-top:0;">Ping</h2>
-    <p class="sh-muted">
-      Calls <code>POST /api/v1/tools/ping</code> with <code>{"host": ...}</code>.
-      The host is dropped straight into a shell command
-      (<code>ping -c 2 &lt;host&gt;</code>) with no sanitization, so shell
-      metacharacters like <code>;</code>, <code>|</code>, <code>&amp;&amp;</code>
-      let you run arbitrary commands on the server.
-    </p>
 
     <form id="sh-ping-form">
       <label class="sh-muted" for="pingHost" style="display:block; margin-bottom:4px;">Host</label>
       <input class="sh-input" type="text" id="pingHost" required style="width:100%; margin-bottom:10px; box-sizing:border-box;">
-      <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
-        <button class="sh-btn" type="button" id="sh-fill-safe" style="font-size:0.85em;">Safe example</button>
-        <button class="sh-btn" type="button" id="sh-fill-injection" style="font-size:0.85em;">Command injection example</button>
-      </div>
       <button class="sh-btn" type="submit">Ping</button>
     </form>
 
