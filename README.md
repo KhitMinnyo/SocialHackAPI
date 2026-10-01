@@ -76,6 +76,8 @@ A real, click-through social media frontend now lives at `/app` — register or 
 
 **The UI itself has zero intentional vulnerabilities.** Every click/form submit calls the same `/api/v1/*` JSON API documented below via `fetch()`, so pointing Burp Suite (or your browser's DevTools Network tab) at the browser and clicking around surfaces the exact same requests you've been crafting by hand with curl/Postman throughout this course — see Tutorial 2.5. Action buttons (edit/delete, the "Admin" nav link) are only shown when the logged-in user "should" see them client-side, but since the underlying API endpoints mostly don't enforce that server-side either, navigating directly (e.g. typing `/app/admin` or `/app/profile/<id>` into the URL bar) reproduces the course's BOLA/BFLA lessons through the UI itself.
 
+Like buttons toggle normally in the UI by calling `/like` or `/unlike` based on the current user's like state. The API still has no rate limit and its `/like` endpoint still permits duplicate requests, so test the rate-limit and race-condition vulnerabilities by replaying API requests directly with Burp Suite, curl, or Postman.
+
 ### 📄 Cheat Sheets
 
 -   `cheatsheets/stage-N-cheatsheet.md` — 1-page curl/payload quick reference per stage (1–8)

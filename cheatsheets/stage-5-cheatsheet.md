@@ -2,6 +2,8 @@
 
 ## API4:2023 — No Rate Limiting
 
+The Web UI's Like button toggles between `/like` and `/unlike` for normal use. To test the API vulnerability, replay or automate direct `/like` requests; the endpoint has no rate limit or duplicate-like check.
+
 ```bash
 # Rapid-fire likes (race condition / like bombing)
 for i in {1..20}; do

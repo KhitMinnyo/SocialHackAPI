@@ -22,9 +22,19 @@ def get_posts():
     posts = Post.query.filter_by(is_public=True).order_by(Post.created_at.desc()).paginate(
         page=page, per_page=per_page, error_out=False
     )
+    post_data = [post.to_dict() for post in posts.items]
+    liked_post_ids = {
+        post_id
+        for (post_id,) in Like.query.with_entities(Like.post_id).filter(
+            Like.user_id == request.current_user_id,
+            Like.post_id.in_([post["id"] for post in post_data]),
+        ).all()
+    }
+    for post in post_data:
+        post["liked_by_me"] = post["id"] in liked_post_ids
 
     return jsonify({
-        "posts": [post.to_dict() for post in posts.items],
+        "posts": post_data,
         "total": posts.total,
         "page": posts.page,
         "pages": posts.pages,
@@ -44,7 +54,11 @@ def get_post(post_id):
         return jsonify({"error": "Post not found"}), 404
 
     # VULNERABILITY: No check if post is private and user has permission
-    return jsonify({"post": post.to_dict()}), 200
+    post_data = post.to_dict()
+    post_data["liked_by_me"] = Like.query.filter_by(
+        post_id=post_id, user_id=request.current_user_id
+    ).first() is not None
+    return jsonify({"post": post_data}), 200
 
 
 @posts_bp.route("", methods=["POST"])

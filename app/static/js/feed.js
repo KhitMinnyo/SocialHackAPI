@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
       <div class="sh-post-content">${SH.escapeHtml(post.content)}</div>
       <div class="sh-post-actions">
-        <button class="sh-btn sh-btn-small sh-btn-outline" data-action="like" data-id="${post.id}">❤️ Like (${post.likes_count})</button>
+        <button class="sh-btn sh-btn-small sh-btn-outline" data-action="like" data-id="${post.id}" aria-pressed="${!!post.liked_by_me}">${post.liked_by_me ? "❤️ Unlike" : "🤍 Like"} (${post.likes_count})</button>
         <a class="sh-btn sh-btn-small sh-btn-outline" href="/app/post/${post.id}">💬 Comments (${post.comments_count})</a>
         ${isMine ? `<button class="sh-btn sh-btn-small sh-btn-danger" data-action="delete" data-id="${post.id}">Delete</button>` : ""}
       </div>
@@ -51,14 +51,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       if (action === "like") {
-        await SH.apiFetch(`/posts/${id}/like`, { method: "POST" });
-        loadFeed();
+        const liked = btn.getAttribute("aria-pressed") === "true";
+        btn.disabled = true;
+        const data = await SH.apiFetch(`/posts/${id}/${liked ? "unlike" : "like"}`, { method: "POST" });
+        btn.setAttribute("aria-pressed", String(!liked));
+        btn.textContent = `${!liked ? "❤️ Unlike" : "🤍 Like"} (${data.likes_count})`;
+        btn.disabled = false;
       } else if (action === "delete") {
         if (!confirm("Delete this post?")) return;
         await SH.apiFetch(`/posts/${id}`, { method: "DELETE" });
         loadFeed();
       }
     } catch (err) {
+      btn.disabled = false;
       SH.showError(errorEl, err);
     }
   });
